@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SevaSetu | Old Age Home Sign In</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+<!-- Real-Time WebSockets & API -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="../realtime.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+min-height:100vh;
+display:flex;
+flex-direction:column;
+background:linear-gradient(120deg,#011232,#0c1c2e);
+color:white;
+}
+
+/* HEADER */
+
+.header{
+width:100%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 40px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+box-shadow:0 5px 20px rgba(0,0,0,0.4);
+position:fixed;
+top:0;
+z-index:10;
+}
+
+.logo-header{
+font-size:22px;
+font-weight:bold;
+color:#ff7b00;
+}
+
+.nav a{
+margin-left:25px;
+text-decoration:none;
+color:white;
+font-size:14px;
+transition:0.3s;
+}
+
+.nav a:hover{
+color:#ff7b00;
+}
+
+/* PARTICLES */
+
+#particles-js{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+/* MAIN */
+
+.wrapper{
+display:flex;
+gap:50px;
+align-items:center;
+justify-content:center;
+flex:1;
+margin-top:90px;
+padding-bottom:40px;
+flex-wrap:wrap;
+}
+
+/* LOGIN CARD */
+
+.container{
+width:380px;
+padding:40px;
+border-radius:20px;
+background:rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.14);
+backdrop-filter:blur(12px);
+box-shadow:0 15px 35px rgba(0,0,0,0.6);
+text-align:center;
+transition:0.5s;
+}
+
+.container:hover{
+transform:perspective(900px) rotateY(10deg) scale(1.04);
+border-color:rgba(255,123,0,0.5);
+}
+
+.logo{
+font-size:24px;
+font-weight:bold;
+margin-bottom:15px;
+color:#ff7b00;
+}
+
+.container h2{
+margin-bottom:25px;
+}
+
+/* INPUT */
+
+.input-box{
+position:relative;
+margin-bottom:20px;
+}
+
+.input-box input{
+width:100%;
+padding:12px 40px;
+border:1px solid rgba(255,255,255,0.15);
+outline:none;
+border-radius:30px;
+background:rgba(255,255,255,0.1);
+color:white;
+transition:0.3s;
+}
+
+.input-box input:focus{
+border-color:#ff7b00;
+}
+
+.input-box i{
+position:absolute;
+left:15px;
+top:50%;
+transform:translateY(-50%);
+color:#ff7b00;
+}
+
+input::placeholder{
+color:#ddd;
+}
+
+/* OPTIONS */
+
+.options{
+display:flex;
+justify-content:space-between;
+font-size:13px;
+margin-bottom:20px;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:30px;
+background:linear-gradient(to right,#ff7b00,#ff5500);
+color:white;
+font-weight:600;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.04);
+box-shadow:0 0 20px rgba(255,123,0,0.6);
+}
+
+/* CARDS */
+
+.cards{
+display:flex;
+flex-direction:column;
+gap:20px;
+}
+
+.card{
+width:230px;
+padding:25px;
+border-radius:20px;
+background:rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.14);
+backdrop-filter:blur(10px);
+text-align:center;
+transition:0.4s;
+}
+
+.card:hover{
+transform:scale(1.08);
+border-color:rgba(255,123,0,0.5);
+box-shadow:0 10px 25px rgba(255,123,0,0.25);
+}
+
+.card i{
+font-size:30px;
+color:#ff7b00;
+margin-bottom:10px;
+}
+
+/* FOOTER */
+
+.footer{
+background:rgba(1,18,50,0.9);
+border-top:1px solid rgba(255,255,255,0.1);
+padding:20px;
+text-align:center;
+margin-top:auto;
+}
+
+.footer h3{
+color:#ff7b00;
+margin-bottom:10px;
+}
+
+.footer-links{
+margin:10px 0;
+}
+
+.footer-links a{
+margin:0 10px;
+color:white;
+text-decoration:none;
+font-size:14px;
+transition:0.3s;
+}
+
+.footer-links a:hover{
+color:#ff7b00;
+}
+
+.social-icons{
+margin-top:10px;
+}
+
+.social-icons i{
+margin:0 10px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.social-icons i:hover{
+color:#ff7b00;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <a href="../Homepage.html" style="text-decoration:none;color:#ff7b00;" class="logo-header">
+    <i class="fa-solid fa-house-user"></i> SevaSetu
+  </a>
+
+  <div class="nav">
+    <a href="../Role.html">Back</a>
+    <a href="../Homepage.html">Home</a>
+  </div>
+</div>
+
+<div id="particles-js"></div>
+
+<div class="wrapper">
+
+<!-- LOGIN -->
+<div class="container">
+<div class="logo">
+<i class="fa-solid fa-house-user"></i> SevaSetu
+</div>
+
+<h2>Old Age Home Sign In</h2>
+
+<form onsubmit="return loginOldAge(event)">
+<div class="input-box">
+<i class="fa-solid fa-envelope"></i>
+<input type="email" id="email" placeholder="Enter Email" required>
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-lock"></i>
+<input type="password" id="password" placeholder="Enter Password" required>
+</div>
+
+<div class="options">
+<label><input type="checkbox"> Remember</label>
+<a href="forgot-password.html">Forgot Password?</a>
+</div>
+
+<button type="submit">Login</button>
+<p style="margin-top:15px;font-size:13px;">Don't have an account? <a href="../Registration/Old-agehome.html" style="color:#ff7b00;text-decoration:underline;">Register here</a></p>
+</form>
+
+</div>
+
+<!-- CARDS -->
+<div class="cards">
+<div class="card">
+<i class="fa-solid fa-hand-holding-heart"></i>
+<h3>Receive Donations</h3>
+<p>Get support easily</p>
+</div>
+
+<div class="card">
+<i class="fa-solid fa-users"></i>
+<h3>Manage Residents</h3>
+<p>Track elderly care</p>
+</div>
+
+<div class="card">
+<i class="fa-solid fa-shield-heart"></i>
+<h3>Secure Platform</h3>
+<p>Safe donation system</p>
+</div>
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <h3>SevaSetu</h3>
+  <p>Connecting hearts, helping lives ❤️</p>
+
+  <div class="footer-links">
+     <a href="../Homepage.html">Home</a>
+     <a href="../legal-links/about.html">About</a>
+     <a href="../legal-links/contact.html">Contact</a>
+     <a href="../legal-links/Privacy-Policy.html">Privacy Policy</a>
+  </div>
+
+  <div class="social-icons">
+    <i class="fab fa-facebook"></i>
+    <i class="fab fa-instagram"></i>
+    <i class="fab fa-twitter"></i>
+  </div>
+
+  <p style="margin-top:10px;font-size:13px;">
+    © 2026 SevaSetu | All Rights Reserved
+  </p>
+</div>
+
+<script>
+
+particlesJS("particles-js",{
+particles:{
+number:{value:90},
+size:{value:3},
+color:{value:"#ff7b00"},
+move:{speed:2},
+line_linked:{
+enable:true,
+distance:150,
+color:"#ff7b00",
+opacity:0.3
+}
+}
+});
+
+// Prefill last registered email
+window.addEventListener("DOMContentLoaded", () => {
+    let last = localStorage.getItem("sevasetu_lastRegisteredOldAgeEmail");
+    if(last) document.getElementById("email").value = last;
+});
+
+async function loginOldAge(e){
+    e.preventDefault();
+
+    let email = document.getElementById("email").value.trim().toLowerCase();
+    let password = document.getElementById("password").value;
+
+    // 1. Check Server API
+    if(window.SevaSetuAPI){
+        try {
+            let res = await window.SevaSetuAPI.login({ email, password, role: 'oldage' });
+            if(res && res.success && res.user){
+                localStorage.setItem("sevasetu_token", res.token);
+                localStorage.setItem("sevasetu_currentUser", JSON.stringify({
+                    role: "oldage",
+                    name: res.user.name,
+                    email: res.user.email,
+                    manager: res.user.manager || "Director"
+                }));
+                alert(`Login Successful ✅ Welcome, ${res.user.name}!`);
+                window.location.href = "../old-ageDashbord/Dashboard00.html";
+                return;
+            } else if(res && res.status === 'pending'){
+                alert("⏳ Account Under Review: Your old age home registration is awaiting Admin verification. Please wait for approval before logging in.");
+                return;
+            } else if(res && res.status === 'rejected'){
+                alert("❌ Registration Rejected: Your account application was not approved by Admin. Please contact support.");
+                return;
+            } else if(res && !res.success){
+                alert(res.message || "Invalid Email or Password ❌");
+                return;
+            }
+        } catch(err) {
+            console.warn("Backend auth failed, falling back to local storage", err);
+        }
+    }
+
+    // 2. Fallback local validation
+    let homes = JSON.parse(localStorage.getItem("sevasetu_oldage_users") || "[]");
+    let home = homes.find(h => h.email.toLowerCase() === email && h.password === password);
+
+    if(home && home.status === 'pending'){
+        alert("⏳ Account Under Review: Your old age home registration is awaiting Admin verification. Please wait for approval before logging in.");
+        return;
+    }
+
+    if(!home && email === "sevasetu@gmail.com" && password === "12345"){
+        home = { homeName: "Happy Old Age Home", email: "sevasetu@gmail.com", manager: "Director" };
+    }
+
+    if(home){
+        localStorage.setItem("sevasetu_currentUser", JSON.stringify({ role: "oldage", name: home.homeName, email: home.email, manager: home.manager }));
+        alert(`Login Successful ✅ Welcome, ${home.homeName}!`);
+        window.location.href = "../old-ageDashbord/Dashboard00.html";
+    }else{
+        alert("Invalid Email or Password ❌");
+    }
+}
+
+</script>
+
+</body>
+</html>

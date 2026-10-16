@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SevaSetu | Donor Sign In</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<!-- Real-Time WebSockets & API -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="../realtime.js"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    background:linear-gradient(120deg,#011232,#0c1c2e);
+    color:white;
+}
+
+#particles-js{
+    position:fixed;
+    width:100%;
+    height:100%;
+    z-index:-1;
+}
+
+/* HEADER */
+.header{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 40px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(10px);
+    position:fixed;
+    top:0;
+    z-index:10;
+}
+
+.logo-header{
+    font-size:22px;
+    font-weight:bold;
+    color:#ff7b00;
+}
+
+.nav a{
+    margin-left:25px;
+    text-decoration:none;
+    color:white;
+    transition:0.3s;
+}
+
+.nav a:hover{color:#ff7b00;}
+
+/* WRAPPER */
+.wrapper{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:50px;
+    padding-top:100px;
+}
+
+/* LOGIN CARD */
+.container{
+    width:380px;
+    padding:40px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.14);
+    backdrop-filter:blur(12px);
+    text-align:center;
+}
+
+.logo{
+    font-size:24px;
+    color:#ff7b00;
+    margin-bottom:10px;
+}
+
+.container h2{margin-bottom:20px;}
+
+/* INPUT */
+.input-box{
+    position:relative;
+    margin-bottom:15px;
+}
+
+.input-box input{
+    width:100%;
+    padding:12px 40px;
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:30px;
+    background:rgba(255,255,255,0.1);
+    color:white;
+    outline:none;
+    transition:0.3s;
+}
+
+.input-box input:focus{
+    border-color:#ff7b00;
+}
+
+.input-box i{
+    position:absolute;
+    left:15px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#ff7b00;
+}
+
+/* BUTTON */
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:30px;
+    background:linear-gradient(to right,#ff7b00,#ff5500);
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.03);
+    box-shadow:0 0 20px rgba(255,123,0,0.6);
+}
+
+/* ✅ MESSAGE BELOW BUTTON */
+.message{
+    margin-top:15px;
+    font-weight:bold;
+    display:none;
+}
+
+.success{
+    color:#00ff88;
+}
+
+.error{
+    color:#ff4d4d;
+}
+
+/* CARDS */
+.cards{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.card{
+    width:230px;
+    padding:20px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.14);
+    text-align:center;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    border-color:rgba(255,123,0,0.5);
+    box-shadow:0 10px 25px rgba(255,123,0,0.2);
+}
+
+.card i{
+    font-size:30px;
+    color:#ff7b00;
+}
+
+/* FOOTER */
+footer{
+    background:rgba(1,18,50,0.9);
+    border-top:1px solid rgba(255,255,255,0.1);
+    padding:20px;
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div id="particles-js"></div>
+
+<!-- HEADER -->
+<div class="header">
+    <a href="../Homepage.html" style="text-decoration:none;color:#ff7b00;" class="logo-header">SevaSetu</a>
+    <div class="nav">
+        <a href="../Role.html">Back</a>
+        <a href="../Homepage.html">Home</a>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="wrapper">
+
+    <!-- LOGIN -->
+    <div class="container">
+        <div class="logo">
+            <i class="fa-solid fa-hand-holding-heart"></i> SevaSetu
+        </div>
+
+        <h2>Donor Login</h2>
+
+        <form onsubmit="loginUser(event)">
+            <div class="input-box">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" id="email" placeholder="Email" required>
+            </div>
+
+            <div class="input-box">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;margin-top:-6px;margin-bottom:14px;">
+                <a href="forgot-password.html" style="color:#ff7b00;font-size:12px;text-decoration:none;">Forgot Password?</a>
+            </div>
+
+            <button type="submit">Login</button>
+            <p style="margin-top:15px;font-size:13px;">Don't have an account? <a href="../Registration/Donor.html" style="color:#ff7b00;text-decoration:underline;">Register here</a></p>
+
+            <!-- ✅ MESSAGE HERE -->
+            <div id="msg" class="message"></div>
+
+        </form>
+    </div>
+
+    <!-- SIDE CARDS -->
+    <div class="cards">
+        <div class="card">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+            <h3>Donate</h3>
+            <p>Help people in need</p>
+        </div>
+
+        <div class="card">
+            <i class="fa-solid fa-chart-line"></i>
+            <h3>Impact</h3>
+            <p>Track your donation</p>
+        </div>
+
+        <div class="card">
+            <i class="fa-solid fa-shield-heart"></i>
+            <h3>Secure</h3>
+            <p>Safe payment</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+    © 2026 SevaSetu
+</footer>
+
+<script>
+particlesJS("particles-js",{
+    particles:{
+        number:{value:80},
+        size:{value:3},
+        color:{value:"#ff7b00"},
+        move:{speed:2},
+        line_linked:{
+            enable:true,
+            distance:150,
+            color:"#ff7b00",
+            opacity:0.3
+        }
+    }
+});
+
+// Auto prefill email if just registered
+window.addEventListener("DOMContentLoaded", () => {
+    let lastEmail = localStorage.getItem("sevasetu_lastRegisteredEmail");
+    if(lastEmail){
+        document.getElementById("email").value = lastEmail;
+    }
+});
+
+// ✅ LOGIN FUNCTION WITH REAL-TIME SERVER AUTH & LOCALSTORAGE FALLBACK
+async function loginUser(e){
+    e.preventDefault();
+
+    let email = document.getElementById("email").value.trim().toLowerCase();
+    let password = document.getElementById("password").value;
+    let msg = document.getElementById("msg");
+
+    msg.style.display = "block";
+    msg.innerText = "Authenticating...";
+    msg.className = "message";
+
+    // 1. Attempt Server API Login
+    if(window.SevaSetuAPI){
+        try {
+            let res = await window.SevaSetuAPI.login({ email, password, role: 'donor' });
+            if(res && res.success && res.user){
+                localStorage.setItem("sevasetu_token", res.token);
+                localStorage.setItem("sevasetu_currentUser", JSON.stringify({
+                    role: "donor",
+                    name: res.user.name,
+                    email: res.user.email,
+                    mobile: res.user.mobile || "",
+                    city: res.user.city || ""
+                }));
+                localStorage.setItem("name", res.user.name);
+                localStorage.setItem("email", res.user.email);
+
+                msg.innerText = `Login Successful ✅ Welcome, ${res.user.name}!`;
+                msg.className = "message success";
+                setTimeout(()=>{ window.location.href = "../Dashboard/Donor-dashboard.html"; }, 1000);
+                return;
+            } else if(res && res.status === 'pending'){
+                msg.innerText = "⏳ Account Under Review: Your registration is awaiting Admin verification. Please wait for approval before logging in.";
+                msg.className = "message";
+                msg.style.color = "#fbbf24";
+                return;
+            } else if(res && res.status === 'rejected'){
+                msg.innerText = "❌ Registration Rejected: Your account application was not approved by Admin.";
+                msg.className = "message error";
+                return;
+            } else if(res && !res.success){
+                msg.innerText = res.message || "Invalid email or password.";
+                msg.className = "message error";
+                return;
+            }
+        } catch(err) {
+            console.warn("Backend auth failed, falling back to local auth", err);
+        }
+    }
+
+    // 2. Fallback local validation
+    let donors = JSON.parse(localStorage.getItem("sevasetu_donors") || "[]");
+    let user = donors.find(d => d.email.toLowerCase() === email && d.password === password);
+
+    if(user && user.status === 'pending'){
+        msg.innerText = "⏳ Account Under Review: Your registration is awaiting Admin verification. Please wait for approval before logging in.";
+        msg.className = "message";
+        msg.style.color = "#fbbf24";
+        return;
+    }
+
+    if(!user && email === "ggy318928@gmail.com" && password === "123456"){
+        user = { name: "Gaurav Yadav", email: "ggy318928@gmail.com", mobile: "9876543210", city: "Delhi" };
+    }
+
+    if(user){
+        localStorage.setItem("sevasetu_currentUser", JSON.stringify({
+            role: "donor",
+            name: user.name || "Donor",
+            email: user.email,
+            mobile: user.mobile || "",
+            city: user.city || ""
+        }));
+        localStorage.setItem("name", user.name || "Donor");
+        localStorage.setItem("email", user.email);
+
+        msg.innerText = `Login Successful ✅ Welcome, ${user.name || "Donor"}!`;
+        msg.className = "message success";
+        setTimeout(()=>{ window.location.href = "../Dashboard/Donor-dashboard.html"; }, 1000);
+    } else {
+        msg.innerText = "Invalid Email or Password ❌";
+        msg.className = "message error";
+    }
+}
+</script>
+
+</body>
+</html>

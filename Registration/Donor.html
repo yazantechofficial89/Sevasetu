@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donor Registration | SevaSetu</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<!-- Real-Time WebSockets & API -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="../realtime.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Poppins",sans-serif;
+}
+
+/* ✅ SCROLL ENABLED */
+body{
+min-height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+background:linear-gradient(120deg,#011232,#0c1c2e);
+/* background:linear-gradient(120deg,#141e30,#243b55,rgba(31, 19, 79, 0.687)); */
+background-size:400% 400%;
+animation:gradientBG 12s ease infinite;
+color:white;
+}
+
+/* HEADER */
+header{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+padding:15px 40px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+background:rgba(0,0,0,0.4);
+backdrop-filter:blur(10px);
+border-bottom:1px solid rgba(255,255,255,0.1);
+z-index:1000;
+}
+
+.logo{
+font-size:22px;
+font-weight:600;
+}
+
+.logo span{
+color:#ff7b00;
+}
+
+nav a{
+margin-left:20px;
+text-decoration:none;
+color:white;
+font-size:14px;
+transition:.3s;
+}
+
+nav a:hover{
+color:#ff7b00;
+}
+
+/* MAIN CONTENT WRAPPER */
+.main{
+margin-top:100px;
+margin-bottom:40px;
+display:flex;
+justify-content:center;
+width:100%;
+}
+
+/* footer */
+footer{
+margin-top:auto;
+width: 100%;
+background:rgba(0,0,0,0.5);
+backdrop-filter:blur(10px);
+padding:40px 20px;
+text-align:center;
+}
+
+.footer-content{
+max-width:1000px;
+margin:auto;
+}
+
+.footer-content h3{
+color:#ff7b00;
+margin-bottom:10px;
+}
+
+.footer-content p{
+color:#ccc;
+font-size:14px;
+margin-bottom:15px;
+}
+
+.footer-links a{
+color:#aaa;
+margin:0 10px;
+text-decoration:none;
+font-size:13px;
+}
+
+.footer-links a:hover{
+color:#ff7b00;
+}
+
+.footer-bottom{
+margin-top:20px;
+font-size:12px;
+color:#777;
+}
+
+
+/* ANIMATION */
+@keyframes gradientBG{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+/* NETWORK BACKGROUND */
+#network{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+/* REGISTER BOX */
+.register-box{
+width:420px;
+padding:40px;
+border-radius:20px;
+
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,0.15);
+
+box-shadow:0 15px 35px rgba(0,0,0,0.4);
+text-align:center;
+
+animation:fadeIn 1.2s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(30px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+h1{
+font-size:32px;
+margin-bottom:10px;
+}
+
+span{
+color:#ff7b00;
+}
+
+.subtitle{
+font-size:14px;
+color:#ccc;
+margin-bottom:25px;
+}
+
+form{
+display:flex;
+flex-direction:column;
+}
+
+input,select{
+padding:12px 15px;
+margin-bottom:15px;
+border-radius:25px;
+border:none;
+outline:none;
+
+background:rgba(255,255,255,0.1);
+color:white;
+}
+
+select option{
+color:black;
+}
+
+button{
+padding:12px;
+border-radius:25px;
+border:none;
+font-weight:bold;
+cursor:pointer;
+
+background:#ff7b00;
+color:white;
+transition:.3s;
+}
+
+button:hover{
+background:#ff5500;
+box-shadow:0 0 20px #ff7b00;
+transform:translateY(-3px);
+}
+
+.error{
+color:#ff4d4d;
+font-size:13px;
+margin-bottom:10px;
+}
+
+.success{
+color:#00ffae;
+margin-top:15px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<a href="../Homepage.html" style="text-decoration:none;color:white;" class="logo">Seva<span>Setu</span></a>
+<nav>
+<a href="../Homepage.html">Home</a>
+<a href="../legal-links/about.html">About</a>
+<a href="../legal-links/contact.html">Contact</a>
+<a href="../legal-links/help.html">Help</a>
+</nav>
+</header>
+
+<canvas id="network"></canvas>
+
+<div class="main">
+<div class="register-box">
+
+<h1>Donor <span>Registration</span></h1>
+<p class="subtitle">Join SevaSetu and start spreading kindness</p>
+
+<form id="donorForm">
+
+<input id="name" type="text" placeholder="Full Name">
+<input id="email" type="email" placeholder="Email Address">
+<input id="mobile" type="tel" placeholder="Mobile Number">
+
+<select id="city" style="color: black;">
+<option value="">Select City</option>
+<option>Delhi</option>
+<option>Mumbai</option>
+<option>Jaipur</option>
+<option>Pune</option>
+<option>Lucknow</option>
+</select>
+
+<input id="pass1" type="password" placeholder="Create Password">
+<input id="pass2" type="password" placeholder="Confirm Password">
+
+<div class="error" id="error"></div>
+
+<button type="submit">Register as Donor</button>
+<p style="margin-top:15px;font-size:14px;">Already registered? <a href="../Signin-Page/Donor-signin.html" style="color:#ff7b00;text-decoration:underline;">Sign in here</a></p>
+
+</form>
+
+<div class="success" id="success"></div>
+
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+<div class="footer-content">
+<h3>SevaSetu</h3>
+<p>Connecting donors with those in need ❤️</p>
+
+<div class="footer-links">
+<a href="../Homepage.html">Home</a>
+<a href="../legal-links/about.html">About</a>
+<a href="../legal-links/contact.html">Contact</a>
+<a href="../legal-links/Privacy-Policy.html">Privacy Policy</a>
+</div>
+
+<div class="footer-bottom">
+© 2026 SevaSetu | All Rights Reserved
+</div>
+</div>
+</footer>
+
+<script>
+
+/* FORM VALIDATION (same) */
+const form=document.getElementById("donorForm")
+const error=document.getElementById("error")
+const success=document.getElementById("success")
+
+form.addEventListener("submit",function(e){
+e.preventDefault()
+
+const name=document.getElementById("name").value.trim()
+const email=document.getElementById("email").value.trim()
+const mobile=document.getElementById("mobile").value.trim()
+const pass1=document.getElementById("pass1").value
+const pass2=document.getElementById("pass2").value
+const city=document.getElementById("city").value
+
+error.innerHTML=""
+
+if(name.length<3){ error.innerHTML="Enter valid name (min 3 characters)"; return }
+if(!email.includes("@") || !email.includes(".")){ error.innerHTML="Enter valid email address"; return }
+if(mobile.length!==10 || isNaN(mobile)){ error.innerHTML="Enter valid 10-digit mobile number"; return }
+if(pass1.length<6){ error.innerHTML="Password too short (min 6 characters)"; return }
+if(pass1!==pass2){ error.innerHTML="Passwords do not match"; return }
+if(city===""){ error.innerHTML="Please select a city"; return }
+
+/* LOCALSTORAGE REGISTRATION */
+let donors = JSON.parse(localStorage.getItem("sevasetu_donors") || "[]");
+
+if(donors.some(d => d.email.toLowerCase() === email.toLowerCase())){
+    error.innerHTML = "This email is already registered! Please sign in.";
+    return;
+}
+
+let newDonor = { name, email, mobile, city, password: pass1, status: 'pending', joinedDate: new Date().toLocaleDateString() };
+donors.push(newDonor);
+localStorage.setItem("sevasetu_donors", JSON.stringify(donors));
+
+// Remember last registered email for convenience in login
+localStorage.setItem("sevasetu_lastRegisteredEmail", email);
+
+// Register on Real SQLite Backend Server
+if(window.SevaSetuAPI && window.SevaSetuAPI.register){
+    window.SevaSetuAPI.register({
+        role: "donor",
+        name,
+        email,
+        mobile,
+        city,
+        password: pass1
+    });
+}
+
+success.innerHTML = `
+    <div style="background:rgba(245,158,11,0.15);border:1px solid #f59e0b;padding:15px;border-radius:12px;margin-top:15px;">
+        <h4 style="color:#fbbf24;margin-bottom:6px;"><i class="fa-solid fa-clock"></i> Registration Submitted!</h4>
+        <p style="font-size:13px;color:#cbd5e1;line-height:1.5;">Your account is pending <strong>Admin Verification</strong>. Once approved, you will be able to log in to your dashboard.</p>
+    </div>
+`;
+setTimeout(()=>{ window.location.href="../Signin-Page/Donor-signin.html"; }, 3500);
+
+})
+
+/* PARTICLES SAME */
+const canvas=document.getElementById("network")
+const ctx=canvas.getContext("2d")
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+let particles=[]
+class Particle{
+constructor(){
+this.x=Math.random()*canvas.width
+this.y=Math.random()*canvas.height
+this.vx=Math.random()*0.6-0.3
+this.vy=Math.random()*0.6-0.3
+}
+update(){
+this.x+=this.vx
+this.y+=this.vy
+if(this.x<0||this.x>canvas.width) this.vx*=-1
+if(this.y<0||this.y>canvas.height) this.vy*=-1
+}
+draw(){
+ctx.fillStyle="white"
+ctx.beginPath()
+ctx.arc(this.x,this.y,2,0,Math.PI*2)
+ctx.fill()
+}
+}
+
+for(let i=0;i<90;i++) particles.push(new Particle())
+
+function animate(){
+ctx.clearRect(0,0,canvas.width,canvas.height)
+particles.forEach(p=>{p.update();p.draw()})
+
+for(let i=0;i<particles.length;i++){
+for(let j=i;j<particles.length;j++){
+let dx=particles[i].x-particles[j].x
+let dy=particles[i].y-particles[j].y
+let dist=Math.sqrt(dx*dx+dy*dy)
+
+if(dist<120){
+ctx.strokeStyle="rgba(255,255,255,0.15)"
+ctx.beginPath()
+ctx.moveTo(particles[i].x,particles[i].y)
+ctx.lineTo(particles[j].x,particles[j].y)
+ctx.stroke()
+}
+}
+}
+requestAnimationFrame(animate)
+}
+animate()
+
+</script>
+
+</body>
+</html>

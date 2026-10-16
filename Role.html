@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Join SevaSetu as a donor, old age home or orphanage.">
+<title>SevaSetu | Choose Role</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#011232;
+  --bg2:#0c1c2e;
+  --accent:#ff7b00;
+  --accent-2:#ff5500;
+  --text:#f4f6fa;
+  --muted:#b8c0cc;
+  --glass:rgba(255,255,255,.06);
+  --border:rgba(255,255,255,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',system-ui,sans-serif}
+html{scroll-behavior:smooth}
+body{
+  min-height:100vh;display:flex;flex-direction:column;color:var(--text);
+  overflow-x:hidden;
+  background:linear-gradient(120deg,var(--bg),var(--bg2),#06213a);
+  background-size:300% 300%;animation:bgShift 16s ease infinite;
+}
+@keyframes bgShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:8px}
+
+/* ---------- background layers ---------- */
+#particles-js{position:fixed;inset:0;z-index:-2}
+.glows{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.glow{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45;animation:floatGlow 10s infinite alternate}
+.glow1{width:320px;height:320px;background:var(--accent);top:8%;left:6%}
+.glow2{width:360px;height:360px;background:#0a5566;bottom:6%;right:6%;animation-delay:3s}
+@keyframes floatGlow{to{transform:translateY(-60px)}}
+
+/* ---------- header ---------- */
+header{
+  position:fixed;top:0;left:0;width:100%;z-index:1000;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 40px;transition:padding .3s,background .3s,box-shadow .3s;
+}
+header.scrolled{padding:10px 40px;background:rgba(1,18,50,.75);backdrop-filter:blur(12px);box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.brand{font-weight:700;font-size:22px;color:var(--accent);text-decoration:none;letter-spacing:.3px}
+nav{display:flex;gap:6px}
+nav a{
+  text-decoration:none;font-size:14px;padding:8px 14px;border-radius:20px;color:var(--text);
+  transition:background .25s,color .25s;
+}
+nav a:hover{background:rgba(255,123,0,.15);color:var(--accent)}
+.menu-btn{display:none;background:none;border:1px solid var(--border);color:var(--text);
+  width:42px;height:42px;border-radius:12px;font-size:20px;cursor:pointer}
+
+/* ---------- layout ---------- */
+main{width:min(1050px,92%);margin:120px auto 60px}
+.hero{text-align:center;margin-bottom:38px}
+.hero h1{font-size:clamp(28px,5vw,44px);font-weight:700;line-height:1.2;margin-bottom:12px}
+.hero h1 span{color:var(--accent)}
+.hero p{color:var(--muted);font-size:15px;max-width:52ch;margin:auto}
+.hint{margin-top:14px;font-size:12px;color:var(--muted)}
+kbd{background:var(--glass);border:1px solid var(--border);border-radius:6px;padding:1px 7px;font-size:12px}
+
+/* ---------- role cards ---------- */
+.card-wrapper{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.card{
+  --mx:50%;--my:50%;
+  position:relative;display:flex;flex-direction:column;text-decoration:none;
+  padding:32px 26px 26px;border-radius:22px;
+  background:var(--glass);border:1px solid var(--border);backdrop-filter:blur(12px);
+  overflow:hidden;transition:transform .35s ease,border-color .35s,box-shadow .35s;
+}
+.card::before{ /* cursor spotlight */
+  content:"";position:absolute;inset:0;opacity:0;transition:opacity .3s;pointer-events:none;
+  background:radial-gradient(320px circle at var(--mx) var(--my),rgba(255,123,0,.22),transparent 65%);
+}
+.card:hover,.card:focus-visible{transform:translateY(-8px);border-color:rgba(255,123,0,.6);box-shadow:0 18px 40px rgba(255,123,0,.22)}
+.card:hover::before{opacity:1}
+.card.recent{border-color:rgba(255,123,0,.7)}
+.badge{
+  position:absolute;top:14px;right:14px;font-size:11px;font-weight:500;
+  background:var(--accent);color:#1a0d00;padding:3px 10px;border-radius:20px;display:none;
+}
+.card.recent .badge{display:block}
+.icon{
+  width:64px;height:64px;border-radius:18px;display:grid;place-items:center;font-size:32px;
+  background:rgba(255,123,0,.14);margin-bottom:18px;
+}
+.card h2{font-size:21px;color:var(--accent);margin-bottom:6px}
+.card .desc{font-size:14px;color:var(--muted);margin-bottom:16px}
+.card ul{list-style:none;margin-bottom:24px;display:grid;gap:8px}
+.card li{font-size:13px;color:#dfe5ee;padding-left:22px;position:relative}
+.card li::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:700}
+.cta{
+  margin-top:auto;align-self:flex-start;
+  padding:10px 22px;border-radius:25px;background:var(--accent);color:#fff;
+  font-size:14px;font-weight:600;transition:background .25s,box-shadow .25s,padding .25s;
+}
+.card:hover .cta{background:var(--accent-2);box-shadow:0 0 18px rgba(255,123,0,.7);padding-right:30px}
+
+/* ---------- how it works ---------- */
+.steps{margin-top:70px;text-align:center}
+.steps h2{font-size:24px;margin-bottom:6px}
+.steps > p{color:var(--muted);font-size:14px;margin-bottom:30px}
+.step-list{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;counter-reset:s;position:relative}
+.step{padding:24px 20px;border-radius:18px;background:var(--glass);border:1px solid var(--border)}
+.step::before{
+  counter-increment:s;content:counter(s);
+  display:grid;place-items:center;width:38px;height:38px;margin:0 auto 12px;
+  border-radius:50%;background:var(--accent);color:#1a0d00;font-weight:700;
+}
+.step h3{font-size:16px;margin-bottom:6px}
+.step p{font-size:13px;color:var(--muted)}
+
+/* ---------- footer ---------- */
+footer{margin-top:auto;background:linear-gradient(120deg,#000,var(--bg2));padding:40px 20px;text-align:center}
+.footer-content{max-width:1000px;margin:auto}
+.footer-content h3{color:var(--accent);margin-bottom:8px}
+.footer-content p{color:var(--muted);font-size:14px;margin-bottom:16px}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px}
+.footer-links a{color:#aab2bf;text-decoration:none;font-size:13px;transition:color .2s}
+.footer-links a:hover{color:var(--accent)}
+.footer-bottom{margin-top:22px;font-size:12px;color:#7d8794}
+
+/* ---------- reveal on load (one moment) ---------- */
+.hero,.card{animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
+.card:nth-child(2){animation-delay:.12s}
+.card:nth-child(3){animation-delay:.24s}
+@keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+
+/* ---------- responsive ---------- */
+@media(max-width:900px){
+  header,header.scrolled{padding:12px 18px}
+  .menu-btn{display:block}
+  nav{
+    position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;
+    background:rgba(1,18,50,.96);backdrop-filter:blur(12px);
+    max-height:0;overflow:hidden;transition:max-height .35s ease;
+  }
+  nav.open{max-height:320px;border-bottom:1px solid var(--border)}
+  nav a{padding:14px 22px;border-radius:0}
+  .card-wrapper,.step-list{grid-template-columns:1fr}
+  .hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+
+<body>
+
+<div id="particles-js" aria-hidden="true"></div>
+<div class="glows" aria-hidden="true"><div class="glow glow1"></div><div class="glow glow2"></div></div>
+
+<header id="top">
+  <a class="brand" href="Homepage.html">SevaSetu</a>
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="nav">☰</button>
+  <nav id="nav" aria-label="Main">
+    <a href="Homepage.html">Home</a>
+    <a href="legal-links/about.html">About</a>
+    <a href="legal-links/contact.html">Contact</a>
+    <a href="legal-links/help.html">Help</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>Welcome to <span>SevaSetu</span></h1>
+    <p>A bridge between people who want to give and the homes that need care. Choose how you want to join.</p>
+    <p class="hint">Shortcut: press <kbd>1</kbd> <kbd>2</kbd> or <kbd>3</kbd></p>
+  </section>
+
+  <section class="card-wrapper" aria-label="Choose your role">
+    <a class="card" data-role="donor" href="Registration/Donor.html">
+      <span class="badge">Last visited</span>
+      <div class="icon" aria-hidden="true">💝</div>
+      <h2>Donor</h2>
+      <p class="desc">Support care homes with donations.</p>
+      <ul>
+        <li>Browse verified homes</li>
+        <li>Give money, food, clothes or supplies</li>
+        <li>Track where your help goes</li>
+      </ul>
+      <span class="cta">Continue as Donor</span>
+    </a>
+
+    <a class="card" data-role="oldage" href="Registration/Old-agehome.html">
+      <span class="badge">Last visited</span>
+      <div class="icon" aria-hidden="true">🏠</div>
+      <h2>Old Age Home</h2>
+      <p class="desc">Register and receive support.</p>
+      <ul>
+        <li>Create a profile for your home</li>
+        <li>List your current needs</li>
+        <li>Hear from donors directly</li>
+      </ul>
+      <span class="cta">Continue as Old Age Home</span>
+    </a>
+
+    <a class="card" data-role="orphanage" href="Registration/orphanges.html">
+      <span class="badge">Last visited</span>
+      <div class="icon" aria-hidden="true">👶</div>
+      <h2>Orphanage</h2>
+      <p class="desc">Connect with donors securely.</p>
+      <ul>
+        <li>Register your orphanage</li>
+        <li>Share requirements safely</li>
+        <li>Receive help from donors</li>
+      </ul>
+      <span class="cta">Continue as Orphanage</span>
+    </a>
+  </section>
+
+  <section class="steps" aria-labelledby="howTitle">
+    <h2 id="howTitle">How it works</h2>
+    <p>Three simple steps, whichever role you pick.</p>
+    <div class="step-list">
+      <div class="step"><h3>Register</h3><p>Fill in a short form with your details.</p></div>
+      <div class="step"><h3>Get verified</h3><p>We check profiles so everyone can trust who they meet.</p></div>
+      <div class="step"><h3>Connect</h3><p>Donors and homes find each other and start helping.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-content">
+    <h3>SevaSetu</h3>
+    <p>Connecting donors with those in need ❤️</p>
+    <div class="footer-links">
+      <a href="Homepage.html">Home</a>
+      <a href="legal-links/about.html">About</a>
+      <a href="legal-links/contact.html">Contact</a>
+      <a href="legal-links/Privacy-Policy.html">Privacy Policy</a>
+    </div>
+    <div class="footer-bottom">© 2026 SevaSetu | All Rights Reserved</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+/* particles: lighter on phones, off if user prefers reduced motion */
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce || typeof particlesJS === 'undefined') return;
+  var count = window.innerWidth < 700 ? 30 : 70;
+  particlesJS("particles-js",{
+    particles:{
+      number:{value:count},
+      size:{value:3,random:true},
+      color:{value:"#ff7b00"},
+      opacity:{value:0.5},
+      line_linked:{enable:true,distance:150,color:"#ff7b00",opacity:0.3},
+      move:{speed:1.6}
+    },
+    interactivity:{events:{onhover:{enable:true,mode:"grab"}},modes:{grab:{distance:140,line_linked:{opacity:0.6}}}}
+  });
+})();
+
+/* header shrinks on scroll */
+var header = document.getElementById('top');
+addEventListener('scroll',function(){header.classList.toggle('scrolled',scrollY>20)},{passive:true});
+
+/* mobile menu */
+var menuBtn = document.getElementById('menuBtn'), nav = document.getElementById('nav');
+menuBtn.addEventListener('click',function(){
+  var open = nav.classList.toggle('open');
+  menuBtn.setAttribute('aria-expanded',open);
+  menuBtn.textContent = open ? '✕' : '☰';
+});
+
+/* card spotlight follows cursor */
+var cards = document.querySelectorAll('.card');
+cards.forEach(function(c){
+  c.addEventListener('pointermove',function(e){
+    var r = c.getBoundingClientRect();
+    c.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    c.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+  c.addEventListener('click',function(){
+    try{localStorage.setItem('sevasetu_role',c.dataset.role)}catch(e){}
+  });
+});
+
+/* remember last chosen role */
+try{
+  var last = localStorage.getItem('sevasetu_role');
+  if(last){var el=document.querySelector('.card[data-role="'+last+'"]'); if(el) el.classList.add('recent');}
+}catch(e){}
+
+/* keyboard shortcuts 1 / 2 / 3 */
+addEventListener('keydown',function(e){
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  var i = ['1','2','3'].indexOf(e.key);
+  if(i>-1) cards[i].click();
+});
+</script>
+</body>
+</html>

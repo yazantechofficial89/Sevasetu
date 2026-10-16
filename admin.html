@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Portal & Verifications | SevaSetu</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+<!-- Real-Time WebSockets & API -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="realtime.js"></script>
+
+<style>
+
+/* GLOBAL */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:linear-gradient(120deg,#011232,#0c1c2e);
+background-attachment:fixed;
+color:white;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+#particles-js{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+/* HEADER */
+.header{
+width:100%;
+padding:16px 40px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:rgba(255,255,255,0.06);
+border-bottom:1px solid rgba(255,255,255,0.12);
+backdrop-filter:blur(10px);
+position:fixed;
+top:0;
+left:0;
+z-index:1000;
+}
+
+.logo-header{
+font-size:22px;
+font-weight:700;
+color:#ff7b00;
+text-decoration:none;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.admin-tag{
+background:rgba(255,123,0,0.2);
+border:1px solid rgba(255,123,0,0.5);
+color:#ff9900;
+font-size:11px;
+padding:3px 10px;
+border-radius:20px;
+font-weight:600;
+letter-spacing:1px;
+}
+
+.nav{
+display:flex;
+align-items:center;
+gap:20px;
+}
+
+.nav a{
+color:#fff;
+text-decoration:none;
+font-size:14px;
+transition:0.3s;
+}
+
+.nav a:hover{
+color:#ff7b00;
+}
+
+/* CONTAINER */
+.container{
+margin-top:100px;
+padding:25px 35px 60px;
+max-width:1300px;
+width:100%;
+margin-left:auto;
+margin-right:auto;
+flex:1;
+}
+
+/* PAGE HEADER */
+.portal-header{
+display:flex;
+justify-content:space-between;
+align-items:flex-end;
+flex-wrap:wrap;
+gap:20px;
+margin-bottom:30px;
+}
+
+.portal-header h1{
+font-size:28px;
+color:#fff;
+font-weight:700;
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.portal-header p{
+color:#94a3b8;
+font-size:14px;
+margin-top:4px;
+}
+
+/* STATS GRID */
+.stats-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+gap:20px;
+margin-bottom:30px;
+}
+
+.stat-card{
+background:rgba(255,255,255,0.06);
+border:1px solid rgba(255,255,255,0.12);
+border-radius:18px;
+padding:20px 24px;
+backdrop-filter:blur(12px);
+display:flex;
+align-items:center;
+gap:18px;
+transition:0.3s;
+}
+
+.stat-card:hover{
+transform:translateY(-4px);
+border-color:rgba(255,123,0,0.5);
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+.stat-icon{
+width:52px;
+height:52px;
+border-radius:14px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+}
+
+.stat-icon.pending{
+background:rgba(245,158,11,0.15);
+color:#fbbf24;
+border:1px solid rgba(245,158,11,0.3);
+}
+
+.stat-icon.approved{
+background:rgba(16,185,129,0.15);
+color:#34d399;
+border:1px solid rgba(16,185,129,0.3);
+}
+
+.stat-icon.rejected{
+background:rgba(239,68,68,0.15);
+color:#f87171;
+border:1px solid rgba(239,68,68,0.3);
+}
+
+.stat-icon.total{
+background:rgba(255,123,0,0.15);
+color:#ff7b00;
+border:1px solid rgba(255,123,0,0.3);
+}
+
+.stat-info h3{
+font-size:26px;
+font-weight:700;
+color:#fff;
+}
+
+.stat-info p{
+font-size:12px;
+color:#94a3b8;
+margin-top:2px;
+}
+
+/* CONTROLS & FILTER BAR */
+.control-bar{
+background:rgba(255,255,255,0.06);
+border:1px solid rgba(255,255,255,0.12);
+border-radius:20px;
+padding:18px 24px;
+backdrop-filter:blur(15px);
+margin-bottom:25px;
+display:flex;
+flex-wrap:wrap;
+gap:15px;
+align-items:center;
+justify-content:space-between;
+}
+
+.tabs-group{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+}
+
+.tab-btn{
+background:rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.14);
+color:#cbd5e1;
+padding:8px 16px;
+border-radius:20px;
+font-size:13px;
+cursor:pointer;
+transition:0.2s;
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.tab-btn:hover{
+background:rgba(255,123,0,0.15);
+color:#fff;
+border-color:#ff7b00;
+}
+
+.tab-btn.active{
+background:linear-gradient(135deg,#ff7b00,#ff5500);
+color:#fff;
+border-color:#ff7b00;
+font-weight:600;
+box-shadow:0 4px 15px rgba(255,123,0,0.35);
+}
+
+.badge-count{
+background:rgba(0,0,0,0.3);
+padding:2px 7px;
+border-radius:10px;
+font-size:11px;
+}
+
+.search-box{
+position:relative;
+min-width:260px;
+}
+
+.search-box input{
+width:100%;
+padding:9px 16px 9px 38px;
+border-radius:20px;
+border:1px solid rgba(255,255,255,0.15);
+background:rgba(255,255,255,0.08);
+color:white;
+outline:none;
+font-size:13px;
+transition:0.3s;
+}
+
+.search-box input:focus{
+border-color:#ff7b00;
+box-shadow:0 0 10px rgba(255,123,0,0.35);
+}
+
+.search-box i{
+position:absolute;
+left:13px;
+top:50%;
+transform:translateY(-50%);
+color:#aaa;
+font-size:13px;
+}
+
+/* USERS TABLE CARD */
+.table-card{
+background:rgba(255,255,255,0.06);
+border:1px solid rgba(255,255,255,0.12);
+border-radius:20px;
+padding:25px;
+backdrop-filter:blur(15px);
+box-shadow:0 15px 35px rgba(0,0,0,0.4);
+overflow-x:auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:13px;
+}
+
+th, td{
+padding:14px 16px;
+text-align:left;
+vertical-align:middle;
+}
+
+th{
+background:rgba(255,123,0,0.15);
+color:#ff7b00;
+border-bottom:1px solid rgba(255,255,255,0.12);
+font-weight:600;
+white-space:nowrap;
+}
+
+tr{
+border-bottom:1px solid rgba(255,255,255,0.08);
+transition:0.2s;
+}
+
+tr:hover{
+background:rgba(255,255,255,0.04);
+}
+
+/* BADGES */
+.role-badge{
+display:inline-flex;
+align-items:center;
+gap:5px;
+padding:3px 10px;
+border-radius:12px;
+font-size:11px;
+font-weight:600;
+text-transform:capitalize;
+}
+
+.role-badge.donor{
+background:rgba(255,123,0,0.15);
+color:#ff9900;
+border:1px solid rgba(255,123,0,0.3);
+}
+
+.role-badge.orphanage{
+background:rgba(14,165,233,0.15);
+color:#38bdf8;
+border:1px solid rgba(14,165,233,0.3);
+}
+
+.role-badge.oldage{
+background:rgba(168,85,247,0.15);
+color:#c084fc;
+border:1px solid rgba(168,85,247,0.3);
+}
+
+.status-badge{
+display:inline-flex;
+align-items:center;
+gap:5px;
+padding:4px 11px;
+border-radius:12px;
+font-size:11px;
+font-weight:700;
+}
+
+.status-badge.pending{
+background:rgba(245,158,11,0.2);
+color:#fbbf24;
+border:1px solid rgba(245,158,11,0.4);
+}
+
+.status-badge.approved{
+background:rgba(16,185,129,0.2);
+color:#34d399;
+border:1px solid rgba(16,185,129,0.4);
+}
+
+.status-badge.rejected{
+background:rgba(239,68,68,0.2);
+color:#f87171;
+border:1px solid rgba(239,68,68,0.4);
+}
+
+/* ACTIONS */
+.action-btns{
+display:flex;
+gap:8px;
+align-items:center;
+}
+
+.btn-approve{
+background:linear-gradient(135deg,#10b981,#059669);
+color:white;
+border:none;
+padding:6px 14px;
+border-radius:15px;
+font-size:12px;
+font-weight:600;
+cursor:pointer;
+transition:0.2s;
+display:inline-flex;
+align-items:center;
+gap:5px;
+box-shadow:0 3px 10px rgba(16,185,129,0.3);
+}
+
+.btn-approve:hover{
+transform:scale(1.05);
+box-shadow:0 4px 14px rgba(16,185,129,0.5);
+}
+
+.btn-reject{
+background:rgba(239,68,68,0.15);
+color:#f87171;
+border:1px solid rgba(239,68,68,0.35);
+padding:6px 12px;
+border-radius:15px;
+font-size:12px;
+font-weight:600;
+cursor:pointer;
+transition:0.2s;
+display:inline-flex;
+align-items:center;
+gap:5px;
+}
+
+.btn-reject:hover{
+background:#ef4444;
+color:white;
+transform:scale(1.05);
+}
+
+.empty-state{
+text-align:center;
+padding:50px 20px;
+color:#94a3b8;
+}
+
+.empty-state i{
+font-size:45px;
+color:#475569;
+margin-bottom:12px;
+}
+
+/* FOOTER */
+footer{
+margin-top:auto;
+padding:20px;
+text-align:center;
+background:rgba(1,18,50,0.9);
+border-top:1px solid rgba(255,255,255,0.08);
+font-size:13px;
+color:#94a3b8;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="particles-js"></div>
+
+<!-- HEADER -->
+<div class="header">
+    <div style="display:flex;align-items:center;gap:12px;">
+        <a href="Homepage.html" class="logo-header">
+            <i class="fa-solid fa-hand-holding-heart"></i> SevaSetu
+        </a>
+        <span class="admin-tag"><i class="fa-solid fa-shield-halved"></i> ADMIN PORTAL</span>
+    </div>
+
+    <div class="nav">
+        <a href="Homepage.html"><i class="fa-solid fa-house"></i> Public Home</a>
+        <a href="Dashboard/Donor-dashboard.html">Donor Dashboard</a>
+        <a href="orphanage.html">Orphanage Dashboard</a>
+        <a href="Dashboard/history.html">Donations</a>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+    <div class="portal-header">
+        <div>
+            <h1><i class="fa-solid fa-user-check" style="color:#ff7b00;"></i> Care Home & User Verifications</h1>
+            <p>Review new registrations, approve legitimate orphanages & old age homes, and control network access.</p>
+        </div>
+        <button onclick="refreshData()" class="btn-approve" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);">
+            <i class="fa-solid fa-arrows-rotate"></i> Refresh
+        </button>
+    </div>
+
+    <!-- STATS SUMMARY -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon pending"><i class="fa-solid fa-clock"></i></div>
+            <div class="stat-info">
+                <h3 id="statPending">0</h3>
+                <p>Pending Approvals</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon approved"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="stat-info">
+                <h3 id="statApproved">0</h3>
+                <p>Approved Users</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon total"><i class="fa-solid fa-hands-holding-child"></i></div>
+            <div class="stat-info">
+                <h3 id="statOrgs">0</h3>
+                <p>Verified Care Homes</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon total"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-info">
+                <h3 id="statDonors">0</h3>
+                <p>Active Donors</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTROLS & FILTER BAR -->
+    <div class="control-bar">
+        <div class="tabs-group">
+            <button class="tab-btn active" data-filter="pending" onclick="setFilter('pending', this)">
+                <i class="fa-solid fa-hourglass-half"></i> Pending <span class="badge-count" id="countPendingTab">0</span>
+            </button>
+            <button class="tab-btn" data-filter="approved" onclick="setFilter('approved', this)">
+                <i class="fa-solid fa-check"></i> Approved
+            </button>
+            <button class="tab-btn" data-filter="rejected" onclick="setFilter('rejected', this)">
+                <i class="fa-solid fa-xmark"></i> Rejected
+            </button>
+            <button class="tab-btn" data-filter="all" onclick="setFilter('all', this)">
+                <i class="fa-solid fa-list"></i> All Users
+            </button>
+        </div>
+
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Search by name, email, city..." oninput="handleSearch()">
+        </div>
+    </div>
+
+    <!-- USERS TABLE -->
+    <div class="table-card">
+        <table id="usersTable">
+            <thead>
+                <tr>
+                    <th>Organization / User Name</th>
+                    <th>Role</th>
+                    <th>Email & Mobile</th>
+                    <th>City & Address</th>
+                    <th>Manager / In-Charge</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="usersTbody">
+                <!-- Populated dynamically -->
+            </tbody>
+        </table>
+
+        <div id="emptyMsg" class="empty-state" style="display:none;">
+            <i class="fa-solid fa-clipboard-check"></i>
+            <h3>No registrations found</h3>
+            <p>There are currently no users matching your active filter criteria.</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+    © 2026 SevaSetu • Internal Administration & Verification Portal
+</footer>
+
+<script>
+
+let allUsers = [];
+let activeFilter = 'pending';
+
+async function fetchAdminStats(){
+    try {
+        const res = await fetch('http://localhost:5000/api/admin/stats');
+        if(res.ok){
+            const data = await res.json();
+            if(data.success && data.stats){
+                document.getElementById('statPending').innerText = data.stats.pendingCount;
+                document.getElementById('statApproved').innerText = data.stats.approvedCount;
+                document.getElementById('statOrgs').innerText = data.stats.totalOrgs;
+                document.getElementById('statDonors').innerText = data.stats.totalDonors;
+                document.getElementById('countPendingTab').innerText = data.stats.pendingCount;
+            }
+        }
+    } catch(e){}
+}
+
+async function fetchUsers(){
+    try {
+        const res = await fetch('http://localhost:5000/api/admin/users?status=all');
+        if(res.ok){
+            const data = await res.json();
+            if(data.success && Array.isArray(data.users)){
+                allUsers = data.users;
+            }
+        }
+    } catch(e){
+        // Fallback for offline file mode
+        let donors = JSON.parse(localStorage.getItem('sevasetu_donors') || '[]');
+        let oldage = JSON.parse(localStorage.getItem('sevasetu_oldage_users') || '[]');
+        let orphanages = JSON.parse(localStorage.getItem('sevasetu_orphanage_users') || '[]');
+        allUsers = [
+            ...donors.map(d => ({ ...d, role: 'donor', status: d.status || 'pending' })),
+            ...oldage.map(h => ({ ...h, name: h.homeName, role: 'oldage', status: h.status || 'pending' })),
+            ...orphanages.map(o => ({ ...o, name: o.orgName, role: 'orphanage', status: o.status || 'pending' }))
+        ];
+    }
+
+    renderTable();
+    fetchAdminStats();
+}
+
+function setFilter(filter, btnEl){
+    activeFilter = filter;
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    if(btnEl) btnEl.classList.add('active');
+    renderTable();
+}
+
+function handleSearch(){
+    renderTable();
+}
+
+function renderTable(){
+    const tbody = document.getElementById('usersTbody');
+    const emptyMsg = document.getElementById('emptyMsg');
+    const table = document.getElementById('usersTable');
+    const search = document.getElementById('searchInput').value.trim().toLowerCase();
+
+    tbody.innerHTML = '';
+
+    let filtered = allUsers.filter(u => {
+        // Status filter
+        if(activeFilter !== 'all'){
+            const userStatus = u.status || 'pending';
+            if(userStatus !== activeFilter) return false;
+        }
+
+        // Search filter
+        if(search){
+            const hay = ((u.name || '') + ' ' + (u.email || '') + ' ' + (u.city || '') + ' ' + (u.role || '')).toLowerCase();
+            if(!hay.includes(search)) return false;
+        }
+
+        return true;
+    });
+
+    if(filtered.length === 0){
+        table.style.display = 'none';
+        emptyMsg.style.display = 'block';
+        return;
+    }
+
+    table.style.display = 'table';
+    emptyMsg.style.display = 'none';
+
+    filtered.forEach(u => {
+        const row = document.createElement('tr');
+        const role = u.role || 'donor';
+        const status = u.status || 'pending';
+
+        let actionHtml = '';
+        if(status === 'pending'){
+            actionHtml = `
+                <div class="action-btns">
+                    <button class="btn-approve" onclick="approveUser(${u.id})">
+                        <i class="fa-solid fa-check"></i> Approve
+                    </button>
+                    <button class="btn-reject" onclick="rejectUser(${u.id})">
+                        <i class="fa-solid fa-xmark"></i> Reject
+                    </button>
+                </div>
+            `;
+        } else if(status === 'approved'){
+            actionHtml = `
+                <div class="action-btns">
+                    <span style="color:#34d399;font-size:12px;"><i class="fa-solid fa-check-double"></i> Verified</span>
+                    <button class="btn-reject" style="padding:4px 8px;font-size:11px;" onclick="rejectUser(${u.id})">Revoke</button>
+                </div>
+            `;
+        } else {
+            actionHtml = `
+                <div class="action-btns">
+                    <button class="btn-approve" style="padding:4px 10px;font-size:11px;" onclick="approveUser(${u.id})">Re-Approve</button>
+                </div>
+            `;
+        }
+
+        row.innerHTML = `
+            <td>
+                <strong>${escapeHtml(u.name || 'Unnamed')}</strong>
+                ${u.created_at ? `<br><small style="color:#64748b;font-size:11px;"><i class="fa-solid fa-calendar"></i> ${u.created_at.substring(0, 10)}</small>` : ''}
+            </td>
+            <td>
+                <span class="role-badge ${role}">
+                    <i class="fa-solid ${role === 'donor' ? 'fa-heart' : (role === 'orphanage' ? 'fa-children' : 'fa-person-cane')}"></i>
+                    ${role}
+                </span>
+            </td>
+            <td>
+                <span style="color:#ffb774;"><i class="fa-solid fa-envelope"></i> ${escapeHtml(u.email || 'N/A')}</span><br>
+                <small style="color:#94a3b8;"><i class="fa-solid fa-phone"></i> ${escapeHtml(u.mobile || 'N/A')}</small>
+            </td>
+            <td>
+                <span><i class="fa-solid fa-location-dot" style="color:#ff7b00;"></i> ${escapeHtml(u.city || 'India')}</span>
+                ${u.address ? `<br><small style="color:#94a3b8;font-size:11px;">${escapeHtml(u.address)}</small>` : ''}
+            </td>
+            <td>
+                <span>${escapeHtml(u.manager || 'Self / Individual')}</span>
+            </td>
+            <td>
+                <span class="status-badge ${status}">
+                    ${status === 'pending' ? '<i class="fa-solid fa-clock"></i> Pending Review' : (status === 'approved' ? '<i class="fa-solid fa-check"></i> Approved' : '<i class="fa-solid fa-xmark"></i> Rejected')}
+                </span>
+            </td>
+            <td>${actionHtml}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+async function approveUser(userId){
+    try {
+        const res = await fetch('http://localhost:5000/api/admin/approve-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId })
+        });
+        const data = await res.json();
+        if(data.success){
+            // Update local memory
+            const user = allUsers.find(u => u.id === userId);
+            if(user) user.status = 'approved';
+            renderTable();
+            fetchAdminStats();
+        } else {
+            alert(data.message || 'Approval failed');
+        }
+    } catch(e){
+        // Offline fallback
+        const user = allUsers.find(u => u.id === userId);
+        if(user) user.status = 'approved';
+        renderTable();
+    }
+}
+
+async function rejectUser(userId){
+    if(!confirm("Are you sure you want to reject this registration?")) return;
+    try {
+        const res = await fetch('http://localhost:5000/api/admin/reject-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId })
+        });
+        const data = await res.json();
+        if(data.success){
+            const user = allUsers.find(u => u.id === userId);
+            if(user) user.status = 'rejected';
+            renderTable();
+            fetchAdminStats();
+        } else {
+            alert(data.message || 'Rejection failed');
+        }
+    } catch(e){
+        const user = allUsers.find(u => u.id === userId);
+        if(user) user.status = 'rejected';
+        renderTable();
+    }
+}
+
+function refreshData(){
+    fetchUsers();
+}
+
+function escapeHtml(text){
+    if(!text) return '';
+    return text.toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    fetchUsers();
+
+    // Real-Time Socket Listener: Automatically adds new registrations to table live!
+    if(window.SevaSetuSocket){
+        window.SevaSetuSocket.on('new_registration', (data) => {
+            console.log('🔔 Live registration received in Admin Portal:', data);
+            if(data.user){
+                allUsers.unshift(data.user);
+                renderTable();
+                fetchAdminStats();
+            }
+        });
+    }
+});
+
+/* PARTICLES */
+particlesJS("particles-js",{
+    particles:{
+        number:{value:50},
+        color:{value:"#ff7b00"},
+        size:{value:3},
+        move:{speed:2},
+        line_linked:{enable:true,color:"#ff7b00",opacity:0.25}
+    }
+});
+
+</script>
+
+</body>
+</html>

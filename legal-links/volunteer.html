@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SevaSetu | Become a Volunteer</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+/* GLOBAL */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+color:white;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+background:linear-gradient(120deg,#011232,#0c1c2e);
+background-attachment:fixed;
+}
+
+/* HEADER */
+
+.header{
+position:fixed;
+top:0;
+width:100%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 40px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+border-bottom:1px solid rgba(255,255,255,0.1);
+box-shadow:0 5px 20px rgba(0,0,0,0.4);
+z-index:1000;
+}
+
+.logo-header{
+font-size:22px;
+font-weight:bold;
+color:#ff7b00;
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+/* NAV LINKS */
+
+.nav a{
+margin-left:25px;
+text-decoration:none;
+color:white;
+font-size:14px;
+transition:0.3s;
+position:relative;
+}
+
+.nav a:hover{
+color:#ff7b00;
+}
+
+.nav a::after{
+content:"";
+position:absolute;
+width:0%;
+height:2px;
+left:0;
+bottom:-5px;
+background:#ff7b00;
+transition:0.3s;
+}
+
+.nav a:hover::after{
+width:100%;
+}
+
+@media(max-width:768px){
+.header{
+flex-direction:column;
+gap:10px;
+}
+.nav a{
+margin:0 10px;
+}
+}
+
+/* PARTICLES */
+
+#particles-js{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+/* CONTAINER */
+
+.container{
+max-width:700px;
+width:90%;
+margin:120px auto 40px;
+background:rgba(255,255,255,0.06);
+padding:40px;
+border-radius:20px;
+border:1px solid rgba(255,255,255,0.12);
+backdrop-filter:blur(15px);
+box-shadow:0 15px 40px rgba(0,0,0,0.4);
+flex:1;
+}
+
+/* TITLE */
+
+h1{
+text-align:center;
+margin-bottom:20px;
+}
+
+h1 span{
+color:#ff7b00;
+}
+
+/* FORM */
+
+.form-group{
+margin-bottom:15px;
+}
+
+input, select, textarea{
+width:100%;
+padding:12px 15px;
+border:1px solid rgba(255,255,255,0.15);
+border-radius:10px;
+outline:none;
+background:rgba(255,255,255,0.08);
+color:white;
+font-size:14px;
+transition:0.3s;
+}
+
+input:focus, select:focus, textarea:focus{
+border-color:#ff7b00;
+box-shadow:0 0 10px rgba(255,123,0,0.4);
+}
+
+select option{
+background:#0c1c2e;
+color:white;
+}
+
+textarea{
+resize:none;
+height:100px;
+}
+
+/* CHECKBOX */
+
+.checkbox-group{
+display:flex;
+flex-wrap:wrap;
+gap:15px;
+margin-top:8px;
+}
+
+.checkbox-group label{
+font-size:14px;
+cursor:pointer;
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.checkbox-group input[type="checkbox"]{
+width:auto;
+accent-color:#ff7b00;
+cursor:pointer;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+padding:13px;
+border:none;
+border-radius:25px;
+background:linear-gradient(to right,#ff7b00,#ff5500);
+color:white;
+font-weight:600;
+font-size:15px;
+cursor:pointer;
+box-shadow:0 0 15px rgba(255,123,0,0.4);
+transition:0.3s;
+margin-top:10px;
+}
+
+button:hover{
+transform:scale(1.03);
+box-shadow:0 0 25px rgba(255,123,0,0.7);
+}
+
+/* FOOTER */
+
+.footer{
+margin-top:auto;
+background:rgba(1,18,50,0.9);
+border-top:1px solid rgba(255,255,255,0.1);
+padding:20px;
+text-align:center;
+}
+
+.footer p{
+color:#aaa;
+font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <a href="../Homepage.html" style="text-decoration:none;color:#ff7b00;" class="logo-header">
+        <i class="fa-solid fa-hand-holding-heart"></i> SevaSetu
+    </a>
+
+    <div class="nav">
+        <a href="../Homepage.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="Privacy-Policy.html">Privacy</a>
+    </div>
+</div>
+
+<!-- PARTICLES -->
+<div id="particles-js"></div>
+
+<!-- CONTENT -->
+<div class="container">
+
+<h1>Become a <span>Volunteer</span></h1>
+
+<form onsubmit="submitVolunteer(event)">
+
+<div class="form-group">
+<input type="text" id="name" placeholder="Full Name" required>
+</div>
+
+<div class="form-group">
+<input type="email" id="email" placeholder="Email Address" required>
+</div>
+
+<div class="form-group">
+<input type="tel" id="phone" placeholder="Phone Number" required>
+</div>
+
+<div class="form-group">
+<select id="availability">
+<option>Full Time</option>
+<option>Part Time</option>
+<option>Weekends</option>
+</select>
+</div>
+
+<div class="form-group">
+<p style="margin-bottom:6px;font-size:14px;color:#eee;">Select Skills:</p>
+<div class="checkbox-group">
+<label><input type="checkbox" value="Teaching"> Teaching</label>
+<label><input type="checkbox" value="Medical Help"> Medical Help</label>
+<label><input type="checkbox" value="Fundraising"> Fundraising</label>
+<label><input type="checkbox" value="Food Distribution"> Food Distribution</label>
+</div>
+</div>
+
+<div class="form-group">
+<textarea id="message" placeholder="Why do you want to volunteer?"></textarea>
+</div>
+
+<button type="submit">Apply Now</button>
+
+</form>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+<p>© 2026 SevaSetu | Volunteer Program</p>
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+<script>
+
+/* SUBMIT */
+
+function submitVolunteer(e){
+e.preventDefault();
+
+let name = document.getElementById("name").value;
+let email = document.getElementById("email").value;
+let phone = document.getElementById("phone").value;
+let availability = document.getElementById("availability").value;
+let message = document.getElementById("message").value;
+
+/* skills */
+let skills = [];
+document.querySelectorAll('input[type="checkbox"]:checked').forEach(cb=>{
+skills.push(cb.value);
+});
+
+/* WhatsApp */
+let text = `Volunteer Application%0AName:${name}%0AEmail:${email}%0APhone:${phone}%0AAvailability:${availability}%0ASkills:${skills.join(", ")}%0AMessage:${message}`;
+window.open("https://wa.me/917011906923?text="+text,"_blank");
+
+/* Email */
+window.location.href = `mailto:support@sevasetu.com?subject=Volunteer Application&body=Name:${name}%0AEmail:${email}%0APhone:${phone}%0AAvailability:${availability}%0ASkills:${skills.join(", ")}%0AMessage:${message}`;
+
+alert("Application Submitted Successfully ✅");
+}
+
+/* PARTICLES */
+
+particlesJS("particles-js",{
+particles:{
+number:{value:70},
+color:{value:"#ff7b00"},
+size:{value:3},
+move:{speed:2},
+line_linked:{enable:true,color:"#ff7b00",opacity:0.3}
+}
+});
+
+</script>
+
+</body>
+</html>
