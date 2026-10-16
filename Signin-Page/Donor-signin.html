@@ -70,19 +70,24 @@ body{
     display:flex;
     justify-content:center;
     align-items:center;
-    gap:50px;
-    padding-top:100px;
+    gap:40px;
+    padding:100px 20px 40px;
+    width:100%;
+    max-width:1100px;
+    margin:0 auto;
 }
 
 /* LOGIN CARD */
 .container{
-    width:380px;
-    padding:40px;
+    width:100%;
+    max-width:390px;
+    padding:40px 30px;
     border-radius:20px;
     background:rgba(255,255,255,0.08);
     border:1px solid rgba(255,255,255,0.14);
     backdrop-filter:blur(12px);
     text-align:center;
+    box-shadow:0 15px 35px rgba(0,0,0,0.5);
 }
 
 .logo{
@@ -189,6 +194,94 @@ footer{
     border-top:1px solid rgba(255,255,255,0.1);
     padding:20px;
     text-align:center;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 820px) {
+    .wrapper {
+        flex-direction: column;
+        gap: 25px;
+        padding: 90px 16px 40px;
+    }
+    .header {
+        padding: 12px 20px;
+    }
+    .cards {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        max-width: 400px;
+        gap: 12px;
+    }
+    .card {
+        flex: 1 1 100px;
+        width: auto;
+        padding: 15px 10px;
+        border-radius: 14px;
+    }
+    .card i {
+        font-size: 24px;
+    }
+    .card h3 {
+        font-size: 13px;
+        margin-top: 5px;
+    }
+    .card p {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 10px 15px;
+    }
+    .logo-header {
+        font-size: 18px;
+    }
+    .nav a {
+        margin-left: 14px;
+        font-size: 13px;
+    }
+    .wrapper {
+        padding: 75px 12px 30px;
+    }
+    .container {
+        padding: 26px 18px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .container h2 {
+        font-size: 20px;
+        margin-bottom: 16px;
+    }
+    .input-box input {
+        padding: 11px 16px 11px 38px;
+        font-size: 13px;
+    }
+    button {
+        padding: 11px;
+        font-size: 14px;
+    }
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        width: 100%;
+    }
+    .card {
+        padding: 10px 4px;
+        border-radius: 12px;
+    }
+    .card i {
+        font-size: 20px;
+    }
+    .card h3 {
+        font-size: 11px;
+    }
+    .card p {
+        display: none;
+    }
 }
 </style>
 </head>
