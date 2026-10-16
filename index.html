@@ -378,8 +378,9 @@ $("admin-login-btn").onclick = async () => {
     if (name.length < 2) return fail("Enter your full name.");
     if (pass !== $("auth-confirm").value) return fail("Passwords do not match.");
 
+    const apiBase = window.API_BASE || (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await fetch(`${apiBase}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role, name, email, password: pass })
@@ -398,8 +399,9 @@ $("admin-login-btn").onclick = async () => {
     }
   } else {
     // LOGIN
+    const apiBase = window.API_BASE || (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch(`${apiBase}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password: pass })

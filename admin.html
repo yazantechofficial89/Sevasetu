@@ -589,12 +589,13 @@ color:#94a3b8;
 
 <script>
 
+const apiBase = window.API_BASE || (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
 let allUsers = [];
 let activeFilter = 'pending';
 
 async function fetchAdminStats(){
     try {
-        const res = await fetch('http://localhost:5000/api/admin/stats');
+        const res = await fetch(`${apiBase}/api/admin/stats`);
         if(res.ok){
             const data = await res.json();
             if(data.success && data.stats){
@@ -610,7 +611,7 @@ async function fetchAdminStats(){
 
 async function fetchUsers(){
     try {
-        const res = await fetch('http://localhost:5000/api/admin/users?status=all');
+        const res = await fetch(`${apiBase}/api/admin/users?status=all`);
         if(res.ok){
             const data = await res.json();
             if(data.success && Array.isArray(data.users)){
@@ -744,7 +745,7 @@ function renderTable(){
 
 async function approveUser(userId){
     try {
-        const res = await fetch('http://localhost:5000/api/admin/approve-user', {
+        const res = await fetch(`${apiBase}/api/admin/approve-user`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: userId })
@@ -770,7 +771,7 @@ async function approveUser(userId){
 async function rejectUser(userId){
     if(!confirm("Are you sure you want to reject this registration?")) return;
     try {
-        const res = await fetch('http://localhost:5000/api/admin/reject-user', {
+        const res = await fetch(`${apiBase}/api/admin/reject-user`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: userId })

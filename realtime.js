@@ -6,6 +6,7 @@
 
 (function () {
     const API_BASE = window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000';
+    window.API_BASE = API_BASE;
 
     // Create Toast Container
     function createToastContainer() {

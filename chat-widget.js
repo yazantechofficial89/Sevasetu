@@ -400,11 +400,11 @@
             .replace(/'/g, "&#039;");
     }
 
-    // Load initial messages from server or defaults
     async function loadInitialMessages(){
+        const apiBase = window.API_BASE || (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
         let messages = [];
         try {
-            const res = await fetch('http://localhost:5000/api/chat/messages');
+            const res = await fetch(`${apiBase}/api/chat/messages`);
             if(res.ok){
                 const data = await res.json();
                 if(data.success && Array.isArray(data.messages)){
