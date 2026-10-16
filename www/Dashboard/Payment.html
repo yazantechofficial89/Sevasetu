@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SevaSetu | Secure Payment</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- Razorpay Official Checkout SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- QRCode & Particles JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<!-- Real-Time WebSockets & API -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="../realtime.js"></script>
+<!-- PDF Receipt Generator -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="../receipt.js"></script>
+
+<style>
+
+/* GLOBAL */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:linear-gradient(120deg,#011232,#0c1c2e);
+background-attachment:fixed;
+color:white;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+#particles-js{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+/* HEADER */
+.header-bar{
+width:100%;
+padding:15px 30px;
+background:rgba(255,255,255,0.06);
+border-bottom:1px solid rgba(255,255,255,0.12);
+backdrop-filter:blur(10px);
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:fixed;
+top:0;
+z-index:1000;
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+color:#ff7b00;
+}
+
+.nav-links a{
+margin-left:20px;
+color:white;
+text-decoration:none;
+font-size:14px;
+transition:0.3s;
+}
+
+.nav-links a:hover{
+color:#ff7b00;
+}
+
+/* MAIN CONTAINER */
+.container{
+margin-top:95px;
+margin-bottom:40px;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+flex:1;
+}
+
+/* CARD */
+.card{
+background:rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.14);
+border-radius:22px;
+padding:35px;
+width:460px;
+max-width:95%;
+text-align:center;
+backdrop-filter:blur(15px);
+box-shadow:0 15px 35px rgba(0,0,0,0.5);
+animation:fadeIn 0.5s ease;
+position:relative;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(20px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+.card h2{
+color:#ff7b00;
+margin-bottom:8px;
+font-size:24px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+}
+
+/* ORG BADGE */
+.org-badge{
+background:rgba(255,123,0,0.15);
+border:1px solid rgba(255,123,0,0.3);
+padding:12px 15px;
+border-radius:14px;
+margin-bottom:20px;
+font-size:14px;
+color:#ffd4aa;
+}
+
+.org-badge strong{
+color:#ff7b00;
+font-size:15px;
+}
+
+/* QUICK AMOUNT CHIPS */
+.amount-chips{
+display:flex;
+justify-content:center;
+gap:8px;
+margin-bottom:15px;
+flex-wrap:wrap;
+}
+
+.chip{
+background:rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.2);
+padding:6px 14px;
+border-radius:20px;
+font-size:13px;
+cursor:pointer;
+transition:0.3s;
+color:#eee;
+font-weight:600;
+}
+
+.chip:hover, .chip.active{
+background:#ff7b00;
+border-color:#ff7b00;
+color:white;
+box-shadow:0 0 10px rgba(255,123,0,0.5);
+}
+
+/* INPUT */
+.input-wrap{
+margin-bottom:20px;
+position:relative;
+}
+
+.currency-sym{
+position:absolute;
+left:15px;
+top:50%;
+transform:translateY(-50%);
+font-size:18px;
+color:#ff7b00;
+font-weight:bold;
+}
+
+input{
+width:100%;
+padding:12px 15px 12px 35px;
+border-radius:12px;
+border:1px solid rgba(255,255,255,0.2);
+outline:none;
+background:rgba(255,255,255,0.08);
+color:white;
+font-size:18px;
+font-weight:bold;
+transition:0.3s;
+}
+
+input:focus{
+border-color:#ff7b00;
+box-shadow:0 0 10px rgba(255,123,0,0.4);
+}
+
+/* RAZORPAY CTA BUTTON */
+.btn-razorpay{
+width:100%;
+padding:14px 20px;
+border:none;
+background:linear-gradient(to right, #02042b, #0c2340);
+border:1px solid #3399cc;
+color:white;
+font-weight:600;
+border-radius:30px;
+cursor:pointer;
+font-size:16px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:12px;
+transition:0.3s;
+box-shadow:0 4px 20px rgba(51,153,204,0.3);
+margin-bottom:12px;
+}
+
+.btn-razorpay img{
+height:20px;
+}
+
+.btn-razorpay:hover{
+transform:translateY(-2px);
+box-shadow:0 6px 25px rgba(51,153,204,0.6);
+border-color:#52b6eb;
+}
+
+/* DIVIDER */
+.divider{
+display:flex;
+align-items:center;
+text-align:center;
+margin:15px 0;
+color:#888;
+font-size:12px;
+}
+
+.divider::before, .divider::after{
+content:'';
+flex:1;
+border-bottom:1px solid rgba(255,255,255,0.15);
+}
+
+.divider:not(:empty)::before{
+margin-right:10px;
+}
+
+.divider:not(:empty)::after{
+margin-left:10px;
+}
+
+/* UPI QR ACCORDION */
+.btn-qr-toggle{
+background:rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.2);
+color:#ddd;
+padding:10px 18px;
+border-radius:25px;
+font-size:13px;
+cursor:pointer;
+transition:0.3s;
+width:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+}
+
+.btn-qr-toggle:hover{
+background:rgba(255,255,255,0.14);
+color:white;
+}
+
+#qrcodeWrapper{
+display:none;
+margin-top:15px;
+animation:fadeIn 0.4s ease;
+}
+
+#qrcode{
+background:white;
+padding:15px;
+border-radius:15px;
+display:inline-block;
+box-shadow:0 10px 25px rgba(0,0,0,0.5);
+}
+
+.qr-caption{
+margin-top:8px;
+font-size:12px;
+color:#bbb;
+}
+
+.success-btn{
+background:linear-gradient(to right,#10b981,#059669);
+margin-top:10px;
+padding:10px 22px;
+border:none;
+border-radius:25px;
+color:white;
+font-weight:600;
+cursor:pointer;
+font-size:13px;
+transition:0.3s;
+box-shadow:0 0 15px rgba(16,185,129,0.4);
+}
+
+.success-btn:hover{
+transform:scale(1.03);
+box-shadow:0 0 20px rgba(16,185,129,0.7);
+}
+
+/* KEY CONFIG LINK */
+.config-link{
+margin-top:20px;
+display:block;
+font-size:12px;
+color:#ffb774;
+text-decoration:none;
+cursor:pointer;
+opacity:0.8;
+transition:0.2s;
+}
+
+.config-link:hover{
+opacity:1;
+text-decoration:underline;
+}
+
+/* SUCCESS MODAL POPUP */
+.modal-overlay{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.75);
+backdrop-filter:blur(8px);
+z-index:2000;
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+background:linear-gradient(135deg, #011232, #0c1c2e);
+border:1px solid #ff7b00;
+padding:35px 25px;
+border-radius:22px;
+text-align:center;
+max-width:440px;
+width:90%;
+box-shadow:0 0 35px rgba(255,123,0,0.4);
+animation:fadeIn 0.3s ease;
+}
+
+.modal-content i.fa-circle-check{
+font-size:55px;
+color:#10b981;
+margin-bottom:12px;
+}
+
+.modal-content h3{
+font-size:22px;
+margin-bottom:8px;
+}
+
+.rzp-id-badge{
+background:rgba(51,153,204,0.15);
+border:1px solid rgba(51,153,204,0.4);
+color:#52b6eb;
+padding:6px 14px;
+border-radius:15px;
+font-family:monospace;
+font-size:13px;
+display:inline-block;
+margin:10px 0 15px;
+}
+
+.modal-content p{
+color:#ccc;
+font-size:14px;
+margin-bottom:20px;
+line-height:1.5;
+}
+
+.modal-actions{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.modal-btn-primary{
+background:linear-gradient(to right,#ff7b00,#ff5500);
+border-radius:25px;
+padding:12px;
+font-weight:600;
+color:white;
+text-decoration:none;
+border:none;
+cursor:pointer;
+transition:0.3s;
+font-size:14px;
+}
+
+.modal-btn-primary:hover{
+box-shadow:0 0 15px rgba(255,123,0,0.6);
+}
+
+.modal-btn-secondary{
+background:rgba(255,255,255,0.1);
+border-radius:25px;
+padding:12px;
+font-weight:600;
+color:white;
+text-decoration:none;
+border:none;
+cursor:pointer;
+transition:0.3s;
+font-size:14px;
+}
+
+.modal-btn-secondary:hover{
+background:rgba(255,255,255,0.2);
+}
+
+/* FOOTER */
+.footer{
+margin-top:auto;
+padding:20px;
+text-align:center;
+background:rgba(1,18,50,0.9);
+border-top:1px solid rgba(255,255,255,0.1);
+font-size:14px;
+color:#aaa;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="particles-js"></div>
+
+<!-- HEADER -->
+<div class="header-bar">
+<a href="Donor-dashboard.html" style="text-decoration:none;color:#ff7b00;" class="logo">SevaSetu</a>
+
+<div class="nav-links">
+<a href="Donor-dashboard.html">Home</a>
+<a href="donate.html">Donate</a>
+<a href="Payment.html">Payment</a>
+<a href="history.html">History</a>
+</div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+<div class="card">
+
+<h2><i class="fa-solid fa-shield-heart"></i> Make Payment</h2>
+<p style="font-size:13px;color:#bbb;margin-bottom:15px;">Encrypted & 100% Secure Transaction</p>
+
+<!-- ORG BANNER -->
+<div class="org-badge" id="orgBadge">
+Donating to: <strong id="selectedOrgName">General Charity Fund</strong>
+<div id="selectedCauseType" style="font-size:12px;opacity:0.85;margin-top:3px;">Cause: General Support</div>
+</div>
+
+<!-- QUICK AMOUNT CHIPS -->
+<div class="amount-chips">
+<span class="chip" onclick="setAmount(500)">₹500</span>
+<span class="chip" onclick="setAmount(1000)">₹1,000</span>
+<span class="chip" onclick="setAmount(2000)">₹2,000</span>
+<span class="chip" onclick="setAmount(5000)">₹5,000</span>
+</div>
+
+<div class="input-wrap">
+<span class="currency-sym">₹</span>
+<input type="number" id="amount" placeholder="Enter Amount" min="1">
+</div>
+
+<!-- PRIMARY ACTION: RAZORPAY -->
+<button class="btn-razorpay" onclick="payWithRazorpay()">
+<i class="fa-solid fa-credit-card" style="color:#3399cc;font-size:18px;"></i>
+<span>Pay with Razorpay</span>
+<span style="font-size:11px;background:#3399cc;color:white;padding:2px 7px;border-radius:10px;font-weight:normal;">Cards / UPI / NetBanking</span>
+</button>
+
+<div class="divider">OR USE INSTANT QR</div>
+
+<!-- SECONDARY OPTION: UPI QR -->
+<button class="btn-qr-toggle" onclick="toggleQR()">
+<i class="fa-solid fa-qrcode"></i> Scan Instant UPI QR
+</button>
+
+<div id="qrcodeWrapper">
+<div id="qrcode"></div>
+<div class="qr-caption">Scan with GPay, PhonePe, Paytm or any UPI App</div>
+<button class="success-btn" onclick="paymentSuccessManual()"><i class="fa-solid fa-check"></i> I have completed UPI payment</button>
+</div>
+
+<!-- CONFIG / INFO -->
+<a class="config-link" onclick="configureRazorpayKey()">
+<i class="fa-solid fa-gear"></i> Razorpay Key Settings (<span id="keyStatusText">Test Mode Active</span>)
+</a>
+
+</div>
+
+</div>
+
+<!-- PAYMENT SUCCESS MODAL -->
+<div class="modal-overlay" id="successModal">
+<div class="modal-content">
+<i class="fa-solid fa-circle-check"></i>
+<h3>Donation Successful!</h3>
+<div class="rzp-id-badge" id="modalPaymentId">ID: pay_982134</div>
+<p id="modalMsg">Thank you for your generous contribution of ₹0 to SevaSetu.</p>
+<div class="modal-actions">
+<button class="modal-btn-primary" onclick="downloadCurrentReceipt()"><i class="fa-solid fa-file-pdf"></i> Download 80G Receipt (PDF)</button>
+<button class="modal-btn-secondary" onclick="window.location.href='history.html'"><i class="fa-solid fa-clock-rotate-left"></i> View in Donation History</button>
+<button class="modal-btn-secondary" onclick="window.location.href='Donor-dashboard.html'"><i class="fa-solid fa-house"></i> Return to Dashboard</button>
+<button class="modal-btn-secondary" onclick="closeModal()"><i class="fa-solid fa-plus"></i> Make Another Donation</button>
+</div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+© 2026 SevaSetu | Powered by Razorpay & UPI ❤️
+</div>
+
+<script>
+
+let currentAmount = 0;
+let selectedOrg = "General Charity Fund";
+let selectedType = "General Support";
+
+// Default standard public test key for Razorpay checkout
+const DEFAULT_RAZORPAY_KEY = "rzp_test_1DP5mmOlF5G5ag";
+
+function getRazorpayKey(){
+    return localStorage.getItem("sevasetu_rzp_key") || DEFAULT_RAZORPAY_KEY;
+}
+
+/* LOAD SELECTED ORG FROM DONATE PAGE */
+window.addEventListener("DOMContentLoaded", () => {
+    let org = sessionStorage.getItem("sevasetu_selectedOrg");
+    let type = sessionStorage.getItem("sevasetu_selectedType");
+
+    if(org){
+        selectedOrg = org;
+        document.getElementById("selectedOrgName").innerText = org;
+    }
+    if(type){
+        selectedType = type;
+        document.getElementById("selectedCauseType").innerText = "Cause: " + type;
+    }
+
+    updateKeyStatus();
+});
+
+function updateKeyStatus(){
+    let key = getRazorpayKey();
+    let isCustom = key !== DEFAULT_RAZORPAY_KEY;
+    document.getElementById("keyStatusText").innerText = isCustom ? "Custom Key: " + key.substring(0, 12) + "..." : "Standard Test Mode";
+}
+
+/* CONFIGURE CUSTOM RAZORPAY KEY */
+function configureRazorpayKey(){
+    let currentKey = getRazorpayKey();
+    let newKey = prompt("Enter your Razorpay Test Key ID (from dashboard.razorpay.com):", currentKey);
+    if(newKey !== null && newKey.trim() !== ""){
+        localStorage.setItem("sevasetu_rzp_key", newKey.trim());
+        updateKeyStatus();
+        alert("Razorpay Key Updated Successfully ✅");
+    }
+}
+
+/* QUICK CHIP CLICK */
+function setAmount(val){
+    document.getElementById("amount").value = val;
+    document.querySelectorAll(".chip").forEach(c => {
+        c.classList.toggle("active", c.innerText.replace(/[^0-9]/g,"") == val);
+    });
+}
+
+/* ==========================================================
+   RAZORPAY CHECKOUT INTEGRATION
+   ========================================================== */
+function payWithRazorpay(){
+    let amountVal = document.getElementById("amount").value.trim();
+
+    if(!amountVal || Number(amountVal) <= 0){
+        alert("Please enter a valid donation amount!");
+        return;
+    }
+
+    currentAmount = Number(amountVal);
+
+    // Fetch user details from login session
+    let user = JSON.parse(localStorage.getItem("sevasetu_currentUser") || "null");
+    let donorName = user ? user.name : (localStorage.getItem("name") || "Gaurav Yadav");
+    let donorEmail = user ? user.email : (localStorage.getItem("email") || "ggy318928@gmail.com");
+    let donorPhone = user ? (user.mobile || "9876543210") : "9876543210";
+
+    // Amount in Paise for Razorpay (e.g. ₹500 = 50000 paise)
+    let amountInPaise = currentAmount * 100;
+
+    let options = {
+        "key": getRazorpayKey(),
+        "amount": amountInPaise,
+        "currency": "INR",
+        "name": "SevaSetu Foundation",
+        "description": `Donation for ${selectedOrg}`,
+        "image": "https://cdn-icons-png.flaticon.com/512/2913/2913584.png",
+        "prefill": {
+            "name": donorName,
+            "email": donorEmail,
+            "contact": donorPhone
+        },
+        "notes": {
+            "beneficiary": selectedOrg,
+            "cause": selectedType
+        },
+        "theme": {
+            "color": "#ff7b00"
+        },
+        "handler": function (response){
+            // Response contains: response.razorpay_payment_id
+            let paymentId = response.razorpay_payment_id || ("pay_" + Math.random().toString(36).substring(2, 10));
+            recordSuccessfulDonation(paymentId, "Razorpay");
+        },
+        "modal": {
+            "ondismiss": function(){
+                console.log("Razorpay Checkout dismissed by user.");
+            }
+        }
+    };
+
+    if(typeof Razorpay !== "undefined"){
+        try {
+            let rzp1 = new Razorpay(options);
+            rzp1.on('payment.failed', function (response){
+                alert("Payment Failed: " + (response.error.description || "Transaction cancelled"));
+            });
+            rzp1.open();
+        } catch(err){
+            console.error("Razorpay error:", err);
+            // Fallback sandbox test simulation if test key has domain restriction
+            if(confirm("Razorpay Test Mode Notice: Proceed with simulated successful payment for testing?")){
+                let mockPaymentId = "pay_test_" + Math.random().toString(36).substring(2, 10);
+                recordSuccessfulDonation(mockPaymentId, "Razorpay (Test)");
+            }
+        }
+    } else {
+        alert("Razorpay SDK could not be loaded. Please check your internet connection.");
+    }
+}
+
+/* ==========================================================
+   UPI QR CODE TOGGLE & MANUAL CONFIRMATION
+   ========================================================== */
+function toggleQR(){
+    let wrapper = document.getElementById("qrcodeWrapper");
+    let amountVal = document.getElementById("amount").value.trim();
+
+    if(wrapper.style.display === "block"){
+        wrapper.style.display = "none";
+        return;
+    }
+
+    if(!amountVal || Number(amountVal) <= 0){
+        alert("Please enter a donation amount first!");
+        return;
+    }
+
+    currentAmount = Number(amountVal);
+    let qrcodeDiv = document.getElementById("qrcode");
+    qrcodeDiv.innerHTML = "";
+
+    let upi = `upi://pay?pa=7011906923@ptaxis&pn=SevaSetu&am=${currentAmount}&cu=INR`;
+    new QRCode(qrcodeDiv, {
+        text: upi,
+        width: 170,
+        height: 170,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+    });
+
+    wrapper.style.display = "block";
+}
+
+function paymentSuccessManual(){
+    let paymentId = "UPI-" + Math.floor(100000 + Math.random() * 900000);
+    recordSuccessfulDonation(paymentId, "UPI QR");
+}
+
+/* ==========================================================
+   RECORD DONATION IN LOCALSTORAGE & SHOW SUCCESS
+   ========================================================= */
+function recordSuccessfulDonation(paymentId, paymentMethod){
+    let user = JSON.parse(localStorage.getItem("sevasetu_currentUser") || "null");
+    let donorName = user ? user.name : (localStorage.getItem("name") || "Guest Donor");
+    let donorEmail = user ? user.email : (localStorage.getItem("email") || "guest@email.com");
+
+    let now = new Date();
+    let formattedDate = now.toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' });
+    let formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    let donationItem = {
+        id: paymentId,
+        amount: currentAmount,
+        org: selectedOrg,
+        type: selectedType,
+        method: paymentMethod,
+        date: formattedDate,
+        time: formattedTime,
+        status: "Success",
+        donorName: donorName,
+        donorEmail: donorEmail
+    };
+
+    // 1. Save to primary donations storage
+    let donations = JSON.parse(localStorage.getItem("sevasetu_donations") || "[]");
+    donations.unshift(donationItem);
+    localStorage.setItem("sevasetu_donations", JSON.stringify(donations));
+
+    // 2. Sync to legacy 'payments' for backwards compatibility
+    let payments = JSON.parse(localStorage.getItem("payments") || "[]");
+    payments.unshift({
+        amount: currentAmount,
+        org: selectedOrg,
+        date: `${formattedDate} ${formattedTime}`,
+        status: "Success"
+    });
+    localStorage.setItem("payments", JSON.stringify(payments));
+
+    // 3. Sync to SQLite Server & Broadcast Live WebSockets
+    if(window.SevaSetuAPI && window.SevaSetuAPI.recordDonation){
+        window.SevaSetuAPI.recordDonation({
+            payment_id: paymentId,
+            amount: currentAmount,
+            currency: 'INR',
+            donor_name: donorName,
+            donor_email: donorEmail,
+            org_name: selectedOrg,
+            cause_type: selectedType,
+            method: paymentMethod
+        });
+    }
+
+    // 4. Show Success Modal with Razorpay payment ID
+    lastRecordedDonation = donationItem;
+    document.getElementById("modalPaymentId").innerText = `Payment ID: ${paymentId}`;
+    document.getElementById("modalMsg").innerHTML = `Thank you <strong>${donorName}</strong>! Your donation of <strong style="color:#ff7b00;">₹${currentAmount.toLocaleString('en-IN')}</strong> via <strong>${paymentMethod}</strong> for <strong>${selectedOrg}</strong> has been successfully processed.`;
+    document.getElementById("successModal").style.display = "flex";
+
+    // Reset inputs
+    document.getElementById("qrcodeWrapper").style.display = "none";
+    document.getElementById("amount").value = "";
+    document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+}
+
+function downloadCurrentReceipt(){
+    if(window.downloadDonationReceipt && lastRecordedDonation){
+        window.downloadDonationReceipt(lastRecordedDonation);
+    } else {
+        alert("Receipt data not found.");
+    }
+}
+
+function closeModal(){
+    document.getElementById("successModal").style.display = "none";
+}
+
+/* PARTICLES */
+particlesJS("particles-js",{
+    particles:{
+        number:{value:60},
+        color:{value:"#ff7b00"},
+        size:{value:3},
+        move:{speed:2},
+        line_linked:{enable:true,color:"#ff7b00",opacity:0.3}
+    }
+});
+
+</script>
+
+</body>
+</html>

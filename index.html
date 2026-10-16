@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="SevaSetu connects donors directly with orphanages and old-age homes.">
+<meta name="theme-color" content="#ff7b00">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SevaSetu">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <title>SevaSetu | A Bridge Between Care and Need</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -512,5 +518,17 @@ addEventListener("keydown", e => { if (e.key === "Escape") { closeModal(); toggl
 <script src="realtime.js"></script>
 <!-- Real-Time Live Chat Widget -->
 <script src="chat-widget.js"></script>
+
+<!-- Register PWA Service Worker -->
+<script src="/pwa-install.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SevaSetu PWA registered:', reg.scope))
+      .catch(err => console.log('PWA register failed:', err));
+  });
+}
+</script>
 </body>
 </html>

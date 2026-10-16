@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SevaSetu | Help Center</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+/* GLOBAL */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+color:white;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+background:linear-gradient(120deg,#011232,#0c1c2e);
+background-attachment:fixed;
+}
+
+/* HEADER */
+
+.header{
+width:100%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 40px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+border-bottom:1px solid rgba(255,255,255,0.1);
+box-shadow:0 5px 20px rgba(0,0,0,0.4);
+position:fixed;
+top:0;
+z-index:10;
+}
+
+.logo-header{
+font-size:22px;
+font-weight:bold;
+color:#ff7b00;
+}
+
+.nav a{
+margin-left:25px;
+text-decoration:none;
+color:white;
+transition:0.3s;
+}
+
+.nav a:hover{
+color:#ff7b00;
+}
+
+/* PARTICLES */
+
+#particles-js{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+/* CONTAINER */
+
+.container{
+max-width:1000px;
+margin:120px auto 40px auto;
+background:rgba(255,255,255,0.06);
+backdrop-filter:blur(15px);
+padding:50px;
+border-radius:20px;
+border:1px solid rgba(255,255,255,0.12);
+box-shadow:0 15px 40px rgba(0,0,0,0.4);
+flex:1;
+}
+
+h1{
+text-align:center;
+margin-bottom:30px;
+}
+
+h1 span{
+color:#ff7b00;
+}
+
+/* FAQ */
+
+.faq-item{
+background:rgba(255,255,255,0.08);
+padding:18px 20px;
+border-radius:10px;
+margin-bottom:15px;
+border:1px solid rgba(255,255,255,0.1);
+cursor:pointer;
+transition:0.3s;
+}
+
+.faq-item:hover{
+border-color:#ff7b00;
+background:rgba(255,255,255,0.12);
+transform:translateY(-2px);
+}
+
+.faq-question{
+font-weight:600;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.faq-question i{
+color:#ff7b00;
+transition:0.3s;
+}
+
+.faq-item.active .faq-question i{
+transform:rotate(180deg);
+}
+
+.faq-answer{
+max-height:0;
+overflow:hidden;
+transition:0.4s;
+color:#ddd;
+font-size:14px;
+}
+
+.faq-item.active .faq-answer{
+max-height:200px;
+margin-top:10px;
+}
+
+/* BUTTONS */
+
+.contact-box{
+text-align:center;
+margin-top:40px;
+}
+
+.contact-box p{
+font-size:18px;
+margin-bottom:15px;
+color:#ddd;
+}
+
+.contact-box button{
+margin:10px;
+padding:12px 28px;
+border:none;
+border-radius:25px;
+cursor:pointer;
+color:white;
+font-weight:600;
+background:linear-gradient(to right,#ff7b00,#ff5500);
+box-shadow:0 0 15px rgba(255,123,0,0.4);
+transition:0.3s;
+}
+
+.contact-box button:hover{
+transform:scale(1.05);
+box-shadow:0 0 25px rgba(255,123,0,0.7);
+}
+
+/* FOOTER */
+
+.footer{
+background:rgba(1,18,50,0.9);
+border-top:1px solid rgba(255,255,255,0.1);
+padding:20px;
+text-align:center;
+}
+
+.footer p{
+color:#aaa;
+font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+<a href="../Homepage.html" style="text-decoration:none;color:#ff7b00;" class="logo-header">
+<i class="fa-solid fa-house-user"></i> SevaSetu
+</a>
+
+<div class="nav">
+<a href="../Homepage.html">Home</a>
+<a href="about.html">About</a>
+<a href="howitworks.html">How It Works</a>
+<a href="contact.html">Contact</a>
+</div>
+</div>
+
+<!-- PARTICLES -->
+<div id="particles-js"></div>
+
+<!-- CONTENT -->
+<div class="container">
+
+<h1>Help <span>Center</span></h1>
+
+<div class="faq">
+
+<div class="faq-item">
+<div class="faq-question">
+<span>How do I register?</span>
+<i class="fa-solid fa-chevron-down"></i>
+</div>
+<div class="faq-answer">Click on register and fill in your basic information.</div>
+</div>
+
+<div class="faq-item">
+<div class="faq-question">
+<span>How can I donate?</span>
+<i class="fa-solid fa-chevron-down"></i>
+</div>
+<div class="faq-answer">Navigate to the donation page, select the amount, and pay securely.</div>
+</div>
+
+<div class="faq-item">
+<div class="faq-question">
+<span>Is payment secure?</span>
+<i class="fa-solid fa-chevron-down"></i>
+</div>
+<div class="faq-answer">Yes, all transactions are protected with industry-standard encryption.</div>
+</div>
+
+</div>
+
+<!-- CONTACT SUPPORT -->
+<div class="contact-box">
+<p>Still need help?</p>
+
+<button onclick="openWhatsApp()">
+<i class="fa-brands fa-whatsapp"></i> WhatsApp Support
+</button>
+
+<button onclick="sendEmail()">
+<i class="fa-solid fa-envelope"></i> Email Support
+</button>
+
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+<p>© 2026 SevaSetu | All Rights Reserved</p>
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+<script>
+
+/* FAQ */
+document.querySelectorAll(".faq-item").forEach(item=>{
+item.addEventListener("click",()=>{
+item.classList.toggle("active");
+});
+});
+
+/* WHATSAPP */
+function openWhatsApp(){
+let phone = "917011906923";
+let message = "Hello SevaSetu, mujhe help chahiye.";
+let url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
+window.open(url, "_blank");
+}
+
+/* EMAIL */
+function sendEmail(){
+window.location.href = "mailto:ggy318928@gmail.com?subject=Help Needed&body=Hello SevaSetu Team, mujhe help chahiye.";
+}
+
+/* PARTICLES */
+particlesJS("particles-js",{
+particles:{
+number:{value:80},
+color:{value:"#ff7b00"},
+size:{value:3},
+move:{speed:2},
+line_linked:{enable:true,color:"#ff7b00",opacity:0.3}
+}
+});
+
+</script>
+
+</body>
+</html>

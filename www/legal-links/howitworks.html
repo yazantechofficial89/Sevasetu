@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SevaSetu | How It Works</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+/* GLOBAL */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+color:white;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+background:linear-gradient(120deg,#011232,#0c1c2e);
+background-attachment:fixed;
+}
+
+/* HEADER */
+
+.header{
+position:fixed;
+top:0;
+width:100%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 40px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+border-bottom:1px solid rgba(255,255,255,0.1);
+z-index:10;
+}
+
+.logo-header{
+font-size:22px;
+font-weight:bold;
+color:#ff7b00;
+}
+
+.nav a{
+margin-left:25px;
+text-decoration:none;
+color:white;
+transition:0.3s;
+}
+
+.nav a:hover{
+color:#ff7b00;
+}
+
+/* PARTICLES */
+
+#particles-js{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+/* HERO */
+
+.hero{
+margin-top:120px;
+text-align:center;
+padding:40px;
+}
+
+.hero h1{
+font-size:38px;
+}
+
+.hero span{
+color:#ff7b00;
+}
+
+.hero p{
+color:#ccc;
+margin-top:10px;
+}
+
+/* STEPS */
+
+.steps{
+max-width:1100px;
+margin:30px auto;
+display:flex;
+flex-wrap:wrap;
+gap:20px;
+justify-content:center;
+padding:0 20px;
+}
+
+.step{
+flex:1 1 250px;
+background:rgba(255,255,255,0.06);
+padding:30px 20px;
+border-radius:15px;
+border:1px solid rgba(255,255,255,0.12);
+backdrop-filter:blur(10px);
+text-align:center;
+transition:0.3s;
+}
+
+.step:hover{
+transform:translateY(-8px) scale(1.03);
+background:rgba(255,255,255,0.12);
+border-color:#ff7b00;
+box-shadow:0 10px 25px rgba(255,123,0,0.25);
+}
+
+.step i{
+font-size:38px;
+margin-bottom:15px;
+color:#ff7b00;
+}
+
+.step h3{
+margin-bottom:10px;
+}
+
+.step p{
+color:#ccc;
+font-size:14px;
+line-height:1.5;
+}
+
+/* FLOW LINE */
+
+.line{
+width:80%;
+height:2px;
+background:linear-gradient(to right, transparent, #ff7b00, transparent);
+margin:25px auto;
+opacity:0.7;
+}
+
+/* FOOTER */
+
+.footer{
+margin-top:auto;
+background:rgba(1,18,50,0.9);
+border-top:1px solid rgba(255,255,255,0.1);
+padding:20px;
+text-align:center;
+}
+
+.footer p{
+color:#aaa;
+font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+<a href="../Homepage.html" style="text-decoration:none;color:#ff7b00;" class="logo-header">
+<i class="fa-solid fa-hand-holding-heart"></i> SevaSetu
+</a>
+
+<div class="nav">
+<a href="../Homepage.html">Home</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
+</div>
+</div>
+
+<!-- PARTICLES -->
+<div id="particles-js"></div>
+
+<!-- HERO -->
+<div class="hero">
+<h1>How <span>It Works</span></h1>
+<p>Simple steps to connect, donate, and help communities ❤️</p>
+</div>
+
+<!-- STEPS -->
+
+<div class="steps">
+
+<div class="step">
+<i class="fa-solid fa-user-plus"></i>
+<h3>1. Register</h3>
+<p>Create your account as donor, volunteer, or organization.</p>
+</div>
+
+<div class="step">
+<i class="fa-solid fa-hand-holding-dollar"></i>
+<h3>2. Choose Service</h3>
+<p>Select donation, volunteering, or request help.</p>
+</div>
+
+<div class="step">
+<i class="fa-solid fa-credit-card"></i>
+<h3>3. Make Contribution</h3>
+<p>Donate funds or contribute your time and skills.</p>
+</div>
+
+<div class="step">
+<i class="fa-solid fa-heart"></i>
+<h3>4. Impact Lives</h3>
+<p>Your support reaches people who need it the most.</p>
+</div>
+
+</div>
+
+<div class="line"></div>
+
+<!-- EXTRA FLOW -->
+
+<div class="steps">
+
+<div class="step">
+<i class="fa-solid fa-building"></i>
+<h3>Organizations Join</h3>
+<p>NGOs and homes register and list their needs.</p>
+</div>
+
+<div class="step">
+<i class="fa-solid fa-check-circle"></i>
+<h3>Verification</h3>
+<p>All organizations are verified for trust & safety.</p>
+</div>
+
+<div class="step">
+<i class="fa-solid fa-bell"></i>
+<h3>Get Updates</h3>
+<p>Receive notifications about impact and activities.</p>
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+<p>© 2026 SevaSetu | How It Works</p>
+</div>
+
+<!-- SCRIPT -->
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+<script>
+particlesJS("particles-js",{
+particles:{
+number:{value:70},
+color:{value:"#ff7b00"},
+size:{value:3},
+move:{speed:2},
+line_linked:{enable:true,color:"#ff7b00",opacity:0.3}
+}
+});
+</script>
+
+</body>
+</html>

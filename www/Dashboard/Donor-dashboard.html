@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SevaSetu | Donor Dashboard</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<!-- Real-Time WebSockets & API -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="../realtime.js"></script>
+<!-- Real-Time Live Chat Widget -->
+<script src="../chat-widget.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:linear-gradient(120deg,#011232,#0c1c2e);
+background-attachment:fixed;
+color:white;
+overflow-x:hidden;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+/* PARTICLES */
+#particles-js{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+/* HEADER */
+.header-bar{
+width:100%;
+padding:15px 30px;
+background:rgba(255,255,255,0.06);
+border-bottom:1px solid rgba(255,255,255,0.12);
+backdrop-filter:blur(10px);
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:fixed;
+top:0;
+left:0;
+z-index:1000;
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+color:#ff7b00;
+}
+
+.nav-links{
+display:flex;
+gap:20px;
+}
+
+.nav-links a{
+text-decoration:none;
+color:white;
+transition:0.3s;
+font-size:14px;
+}
+
+.nav-links a:hover{
+color:#ff7b00;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:220px;
+height:calc(100vh - 60px);
+background:rgba(255,255,255,0.06);
+border-right:1px solid rgba(255,255,255,0.12);
+backdrop-filter:blur(10px);
+padding:20px 15px;
+position:fixed;
+top:60px;
+left:0;
+overflow-y:auto;
+}
+
+.sidebar h2{
+text-align:center;
+margin-bottom:25px;
+color:#ff7b00;
+font-size:20px;
+}
+
+.sidebar a{
+display:flex;
+align-items:center;
+gap:12px;
+color:white;
+text-decoration:none;
+margin:10px 0;
+padding:12px 15px;
+border-radius:10px;
+transition:0.3s;
+font-size:14px;
+}
+
+.sidebar a:hover, .sidebar a.active{
+background:#ff7b00;
+color:#fff;
+box-shadow:0 0 15px rgba(255,123,0,0.4);
+}
+
+/* MAIN */
+.main{
+margin-left:220px;
+margin-top:70px;
+padding:30px;
+flex:1;
+}
+
+.welcome-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:15px;
+margin-bottom:25px;
+}
+
+.welcome-header h1{
+font-size:28px;
+}
+
+.btn-donate-now{
+background:linear-gradient(to right,#ff7b00,#ff5500);
+color:white;
+text-decoration:none;
+padding:10px 22px;
+border-radius:25px;
+font-weight:600;
+display:inline-flex;
+align-items:center;
+gap:8px;
+box-shadow:0 0 15px rgba(255,123,0,0.4);
+transition:0.3s;
+}
+
+.btn-donate-now:hover{
+transform:translateY(-2px);
+box-shadow:0 0 25px rgba(255,123,0,0.7);
+}
+
+/* PROFILE */
+.profile{
+display:flex;
+align-items:center;
+gap:20px;
+background:rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.12);
+padding:20px;
+border-radius:18px;
+margin-bottom:30px;
+backdrop-filter:blur(10px);
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+.profile img{
+width:65px;
+height:65px;
+border-radius:50%;
+border:2px solid #ff7b00;
+object-fit:cover;
+}
+
+.profile h3{
+font-size:20px;
+margin-bottom:4px;
+}
+
+.profile p{
+color:#ccc;
+font-size:14px;
+}
+
+/* CARDS */
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+gap:20px;
+margin-bottom:35px;
+}
+
+.card{
+padding:25px 20px;
+border-radius:18px;
+background:rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.12);
+text-align:center;
+transition:0.3s;
+backdrop-filter:blur(10px);
+}
+
+.card:hover{
+transform:translateY(-5px);
+border-color:rgba(255,123,0,0.5);
+box-shadow:0 10px 25px rgba(255,123,0,0.25);
+}
+
+.card h3{
+color:#ff7b00;
+font-size:30px;
+margin-bottom:6px;
+}
+
+.card p{
+color:#aaa;
+font-size:14px;
+}
+
+/* TABLE SECTION */
+.table-section{
+background:rgba(255,255,255,0.06);
+border:1px solid rgba(255,255,255,0.12);
+padding:25px;
+border-radius:18px;
+backdrop-filter:blur(10px);
+}
+
+.table-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.table-header h2{
+font-size:20px;
+color:#ff7b00;
+}
+
+.table-header a{
+color:#ff7b00;
+text-decoration:none;
+font-size:13px;
+transition:0.3s;
+}
+
+.table-header a:hover{
+text-decoration:underline;
+}
+
+.table-responsive{
+overflow-x:auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+border-radius:12px;
+overflow:hidden;
+font-size:14px;
+}
+
+th,td{
+padding:14px;
+text-align:center;
+}
+
+th{
+background:rgba(255,123,0,0.2);
+color:#ff7b00;
+border-bottom:1px solid rgba(255,255,255,0.12);
+font-weight:600;
+}
+
+tr{
+border-bottom:1px solid rgba(255,255,255,0.06);
+transition:0.2s;
+}
+
+tr:hover{
+background:rgba(255,255,255,0.05);
+}
+
+/* FOOTER */
+.footer{
+margin-left:220px;
+padding:20px;
+text-align:center;
+background:rgba(1,18,50,0.9);
+border-top:1px solid rgba(255,255,255,0.1);
+font-size:13px;
+color:#aaa;
+}
+
+@media(max-width:768px){
+.sidebar{
+display:none;
+}
+.main, .footer{
+margin-left:0;
+padding:20px;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="particles-js"></div>
+
+<!-- HEADER -->
+<div class="header-bar">
+<a href="../Homepage.html" style="text-decoration:none;color:#ff7b00;" class="logo">SevaSetu</a>
+<div class="nav-links">
+<a href="../Homepage.html">Home</a>
+<a href="donate.html">Donate</a>
+<a href="../legal-links/contact.html">Contact</a>
+</div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+<h2>SevaSetu</h2>
+<a href="Donor-dashboard.html" class="active"><i class="fa fa-home"></i> Dashboard</a>
+<a href="donate.html"><i class="fa fa-hand-holding-heart"></i> Donate</a>
+<a href="history.html"><i class="fa fa-history"></i> History</a>
+<a href="Payment.html"><i class="fa-solid fa-credit-card"></i> Payment</a>
+<a href="profile.html"><i class="fa fa-user"></i> Profile</a>
+<a href="javascript:void(0)" onclick="logout()"><i class="fa fa-sign-out-alt"></i> Logout</a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="welcome-header">
+<h1 id="welcomeHeading">Welcome, Donor 👋</h1>
+<a href="donate.html" class="btn-donate-now"><i class="fa-solid fa-heart"></i> Donate Now</a>
+</div>
+
+<div class="profile">
+<img id="profileImg" src="https://ui-avatars.com/api/?name=Donor&background=ff7b00&color=fff&bold=true" alt="Profile">
+<div>
+<h3 id="profileName">Guest User</h3>
+<p id="profileEmail">guest@email.com</p>
+</div>
+</div>
+
+<div class="cards">
+<div class="card">
+<h3 id="totalDonatedStat">₹ 0</h3>
+<p>Total Donated</p>
+</div>
+
+<div class="card">
+<h3 id="orgsHelpedStat">0</h3>
+<p>Organizations Helped</p>
+</div>
+
+<div class="card">
+<h3 id="donationsCountStat">0</h3>
+<p>Total Contributions</p>
+</div>
+</div>
+
+<div class="table-section">
+<div class="table-header">
+<h2>Recent Donations</h2>
+<a href="history.html">View Full History <i class="fa-solid fa-arrow-right"></i></a>
+</div>
+
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Organization</th>
+<th>Type / Purpose</th>
+<th>Amount</th>
+</tr>
+</thead>
+<tbody id="recentDonationsTable">
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+<p>© 2026 SevaSetu | Every contribution saves lives ❤️</p>
+</div>
+
+<script>
+
+// Default sample donations for fresh sessions
+const defaultDonations = [
+    { id: "DON-847291", amount: 2000, org: "Sunrise Orphanage", type: "Food & Books", date: "12 Mar 2026", status: "Success" },
+    { id: "DON-847290", amount: 1500, org: "Happy Old Age Home", type: "Food & Groceries", date: "10 Mar 2026", status: "Success" },
+    { id: "DON-847289", amount: 8500, org: "Care & Love Old Age Home", type: "Medical Care & Medicines", date: "08 Mar 2026", status: "Success" },
+    { id: "DON-847288", amount: 3500, org: "Bal Asha Trust", type: "Toys & Study Material", date: "05 Mar 2026", status: "Success" }
+];
+
+/* LOAD DYNAMIC USER & DONATION DATA */
+window.onload = function(){
+    // 1. User Profile Data
+    let currentUser = JSON.parse(localStorage.getItem("sevasetu_currentUser") || "null");
+    let name = currentUser ? currentUser.name : (localStorage.getItem("name") || "Gaurav Yadav");
+    let email = currentUser ? currentUser.email : (localStorage.getItem("email") || "ggy318928@gmail.com");
+    let img = localStorage.getItem("img");
+
+    document.getElementById("welcomeHeading").innerText = `Welcome, ${name} 👋`;
+    document.getElementById("profileName").innerText = name;
+    document.getElementById("profileEmail").innerText = email;
+
+    if(img){
+        document.getElementById("profileImg").src = img;
+    } else {
+        document.getElementById("profileImg").src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff7b00&color=fff&bold=true`;
+    }
+
+    // 2. Load Donations & Live Server Stats
+    async function refreshDashboardData(){
+        let donations = defaultDonations;
+
+        // Try fetching real-time data from backend server
+        if(window.SevaSetuAPI){
+            let apiRes = await window.SevaSetuAPI.getDonations(10);
+            if(apiRes && apiRes.success && apiRes.donations && apiRes.donations.length > 0){
+                donations = apiRes.donations.map(d => ({
+                    id: d.id,
+                    amount: d.amount,
+                    org: d.org_name,
+                    type: d.cause_type,
+                    date: d.created_at ? d.created_at.substring(0, 10) : 'Recent',
+                    status: d.status
+                }));
+            } else {
+                let stored = localStorage.getItem("sevasetu_donations");
+                if(stored) donations = JSON.parse(stored);
+            }
+        }
+
+        let totalDonated = donations.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+        let uniqueOrgs = new Set(donations.map(d => d.org)).size;
+
+        document.getElementById("totalDonatedStat").innerText = `₹ ${totalDonated.toLocaleString('en-IN')}`;
+        document.getElementById("orgsHelpedStat").innerText = uniqueOrgs;
+        document.getElementById("donationsCountStat").innerText = donations.length;
+
+        // Render Table
+        let tbody = document.getElementById("recentDonationsTable");
+        tbody.innerHTML = "";
+        let recentList = donations.slice(0, 5);
+        recentList.forEach(item => {
+            let row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${item.date || "N/A"}</td>
+                <td><strong>${item.org || "General Charity"}</strong></td>
+                <td><span style="color:#ddd;">${item.type || "General Support"}</span></td>
+                <td><strong style="color:#ff7b00;font-size:15px;">₹ ${(Number(item.amount) || 0).toLocaleString('en-IN')}</strong></td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    refreshDashboardData();
+}
+
+/* LOGOUT - PRESERVES DATABASE AND ONLY CLEARS ACTIVE SESSION */
+function logout(){
+    localStorage.removeItem("sevasetu_currentUser");
+    localStorage.removeItem("name");
+    localStorage.removeItem("email");
+    localStorage.removeItem("user");
+    window.location.href = "log-out.html";
+}
+
+/* PARTICLES */
+particlesJS("particles-js",{
+    particles:{
+        number:{value:60},
+        color:{value:"#ff7b00"},
+        size:{value:3},
+        move:{speed:2},
+        line_linked:{enable:true,color:"#ff7b00",opacity:0.3}
+    }
+});
+
+</script>
+
+</body>
+</html>

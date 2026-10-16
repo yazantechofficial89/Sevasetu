@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SevaSetu | Profile</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:linear-gradient(120deg,#011232,#0c1c2e);
+background-attachment:fixed;
+color:white;
+min-height:100vh;
+}
+
+/* HEADER */
+.header{
+width:100%;
+padding:15px 30px;
+background:rgba(255,255,255,0.06);
+border-bottom:1px solid rgba(255,255,255,0.12);
+backdrop-filter:blur(10px);
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:fixed;
+top:0;
+left:0;
+z-index:1000;
+}
+
+.logo{
+color:#ff7b00;
+font-size:22px;
+font-weight:bold;
+}
+
+.nav a{
+margin:0 10px;
+color:white;
+text-decoration:none;
+transition:0.3s;
+}
+
+.nav a:hover{
+color:#ff7b00;
+}
+
+/* MAIN */
+.main{
+margin-top:90px;
+display:flex;
+justify-content:center;
+padding:20px;
+}
+
+/* PROFILE BOX */
+.profile-box{
+width:100%;
+max-width:500px;
+background:rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.14);
+backdrop-filter:blur(10px);
+padding:30px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+.profile-box h2{
+color:#ff7b00;
+margin-bottom:20px;
+}
+
+/* IMAGE */
+.profile-box img{
+width:100px;
+height:100px;
+border-radius:50%;
+margin-bottom:15px;
+object-fit:cover;
+border:2px solid #ff7b00;
+}
+
+/* INPUT */
+.input-group{
+margin:15px 0;
+text-align:left;
+}
+
+.input-group label{
+display:block;
+margin-bottom:6px;
+color:#dfe5ee;
+font-size:14px;
+}
+
+.input-group input{
+width:100%;
+padding:12px 15px;
+border:1px solid rgba(255,255,255,0.15);
+border-radius:25px;
+background:rgba(255,255,255,0.1);
+color:white;
+outline:none;
+transition:0.3s;
+}
+
+.input-group input:focus{
+border-color:#ff7b00;
+}
+
+/* BUTTON */
+.btn{
+margin-top:20px;
+padding:12px;
+width:100%;
+border:none;
+border-radius:25px;
+background:linear-gradient(to right,#ff7b00,#ff5500);
+color:white;
+font-weight:600;
+cursor:pointer;
+transition:0.3s;
+}
+
+.btn:hover{
+transform:scale(1.03);
+box-shadow:0 0 20px rgba(255,123,0,0.6);
+}
+
+/* FOOTER */
+.footer{
+margin-top:40px;
+padding:20px;
+text-align:center;
+background:rgba(1,18,50,0.8);
+border-top:1px solid rgba(255,255,255,0.1);
+}
+
+.footer i{
+margin:0 8px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.footer i:hover{
+color:#ff7b00;
+}
+
+@media(max-width:600px){
+.nav{
+display:none;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+<a href="Donor-dashboard.html" style="text-decoration:none;color:#ff7b00;" class="logo">SevaSetu</a>
+<div class="nav">
+<a href="Donor-dashboard.html">Dashboard</a>
+<a href="donate.html">Donate</a>
+<a href="history.html">History</a>
+</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="profile-box">
+
+<img id="profilePic" src="https://i.pravatar.cc/150">
+
+<h2>Edit Profile</h2>
+
+<div class="input-group">
+<label>Name</label>
+<input type="text" id="name">
+</div>
+
+<div class="input-group">
+<label>Email</label>
+<input type="email" id="email">
+</div>
+
+<div class="input-group">
+<label>Phone</label>
+<input type="text" id="phone">
+</div>
+
+<div class="input-group">
+<label>Change Profile Picture</label>
+<input type="file" onchange="previewImage(event)">
+</div>
+
+<button class="btn" onclick="saveProfile()">Save Changes</button>
+
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+<p>© 2026 SevaSetu | Your Profile ❤️</p>
+<div>
+<i class="fab fa-facebook"></i>
+<i class="fab fa-instagram"></i>
+<i class="fab fa-linkedin"></i>
+</div>
+</div>
+
+<script>
+
+/* LOAD DATA WHEN PAGE OPENS */
+window.onload = function(){
+    let currentUser = JSON.parse(localStorage.getItem("sevasetu_currentUser") || "null");
+    let name = currentUser ? currentUser.name : (localStorage.getItem("name") || "Gaurav Yadav");
+    let email = currentUser ? currentUser.email : (localStorage.getItem("email") || "ggy318928@gmail.com");
+    let phone = currentUser ? (currentUser.mobile || currentUser.phone) : (localStorage.getItem("phone") || "9876543210");
+
+    document.getElementById("name").value = name;
+    document.getElementById("email").value = email;
+    document.getElementById("phone").value = phone || "";
+
+    let img = localStorage.getItem("img");
+    if(img){
+        document.getElementById("profilePic").src = img;
+    } else {
+        document.getElementById("profilePic").src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff7b00&color=fff&bold=true`;
+    }
+}
+
+/* IMAGE PREVIEW */
+function previewImage(event){
+    let file = event.target.files[0];
+    if(file){
+        let reader = new FileReader();
+        reader.onload = function(){
+            document.getElementById("profilePic").src = reader.result;
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+/* SAVE PROFILE */
+function saveProfile(){
+    let name = document.getElementById("name").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let phone = document.getElementById("phone").value.trim();
+    let img = document.getElementById("profilePic").src;
+
+    if(!name){
+        alert("Please enter a valid name!");
+        return;
+    }
+
+    /* SAVE TO LOCAL STORAGE */
+    let currentUser = JSON.parse(localStorage.getItem("sevasetu_currentUser") || "null") || {};
+    currentUser.name = name;
+    currentUser.email = email;
+    currentUser.mobile = phone;
+    localStorage.setItem("sevasetu_currentUser", JSON.stringify(currentUser));
+
+    localStorage.setItem("name", name);
+    localStorage.setItem("email", email);
+    localStorage.setItem("phone", phone);
+    if(img && !img.includes("ui-avatars.com")){
+        localStorage.setItem("img", img);
+    }
+
+    // Update donors list
+    let donors = JSON.parse(localStorage.getItem("sevasetu_donors") || "[]");
+    let idx = donors.findIndex(d => d.email.toLowerCase() === email.toLowerCase());
+    if(idx !== -1){
+        donors[idx].name = name;
+        donors[idx].mobile = phone;
+        localStorage.setItem("sevasetu_donors", JSON.stringify(donors));
+    }
+
+    alert("Profile Updated Successfully 🎉");
+}
+
+</script>
+
+</body>
+</html>

@@ -5,7 +5,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "mobile:sync": "npx cap sync android",
+    "mobile:open": "npx cap open android",
+    "mobile:run": "npx cap run android"
   },
   "engines": {
     "node": ">=22.5.0"
@@ -23,5 +26,10 @@
     "nodemailer": "^10.1.2",
     "razorpay": "^2.9.8",
     "socket.io": "^4.8.4"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3"
   }
 }

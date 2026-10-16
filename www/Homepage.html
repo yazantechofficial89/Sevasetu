@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="SevaSetu connects donors directly with orphanages and old-age homes.">
+<meta name="theme-color" content="#ff7b00">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SevaSetu">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<title>SevaSetu | A Bridge Between Care and Need</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{--bg:#011232;--bg2:#0c1c2e;--accent:#ff7b00;--accent2:#ff5500;--text:#fff;--muted:#c9d1dc;--glass:rgba(255,255,255,.08);--line:rgba(255,255,255,.14)}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{background:linear-gradient(120deg,var(--bg),var(--bg2));background-attachment:fixed;color:var(--text);overflow-x:hidden;padding-top:80px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+#particles-js{position:fixed;inset:0;z-index:-1}
+.progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:2000}
+
+/* NAVBAR */
+.navbar{position:fixed;top:0;left:0;width:100%;z-index:1000;display:flex;justify-content:space-between;align-items:center;padding:20px 60px;backdrop-filter:blur(10px);background:var(--glass);transition:.3s}
+.navbar.scrolled{padding:12px 60px;background:rgba(1,18,50,.88);box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.logo{font-size:28px;font-weight:700;text-decoration:none}
+.logo span{color:var(--accent)}
+nav{display:flex;align-items:center;gap:26px}
+nav a{text-decoration:none;color:#fff;transition:.3s;cursor:pointer;background:none;border:0;font-size:16px}
+nav a:hover,nav a.active{color:var(--accent)}
+#admin-link{border:1.5px solid var(--accent);padding:7px 18px;border-radius:30px;color:var(--accent)}
+#admin-link:hover{background:var(--accent);color:#fff}
+.menu-btn{display:none;background:none;border:0;color:#fff;font-size:24px;cursor:pointer}
+
+/* HERO */
+.hero{display:flex;justify-content:space-between;align-items:center;gap:40px;padding:80px 60px;min-height:88vh}
+.hero-text{max-width:560px}
+.hero-text h1{font-size:clamp(34px,5vw,54px);line-height:1.15;margin-bottom:20px}
+.hero-text h1 span{color:var(--accent)}
+.hero-text p{margin-bottom:30px;line-height:1.7;color:var(--muted)}
+.typed{color:var(--accent);font-weight:600;border-right:2px solid var(--accent);padding-right:3px;animation:blink .8s steps(1) infinite}
+@keyframes blink{50%{border-color:transparent}}
+.btn{display:inline-block;padding:12px 30px;border-radius:30px;text-decoration:none;font-weight:600;margin:0 12px 10px 0;transition:.4s}
+.primary{background:var(--accent);color:#fff}
+.primary:hover{background:var(--accent2);box-shadow:0 0 20px var(--accent)}
+.secondary{border:2px solid var(--accent);color:var(--accent)}
+.secondary:hover{background:var(--accent);color:#fff;box-shadow:0 0 20px var(--accent)}
+.hero-image img{width:min(590px,100%);height:auto;animation:float 4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-15px)}}
+
+/* SECTIONS */
+section{padding:70px 60px}
+.section-title{font-size:32px;margin-bottom:8px}
+.section-sub{color:var(--muted);margin-bottom:40px;max-width:560px;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding-top:20px}
+.stat{background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:26px;text-align:center}
+.stat b{display:block;font-size:38px;color:var(--accent)}
+.stat small{color:var(--muted)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;counter-reset:s}
+.step{background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:26px;position:relative}
+.step::before{counter-increment:s;content:counter(s);position:absolute;top:-16px;left:22px;width:34px;height:34px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-weight:700}
+.step i{font-size:26px;color:var(--accent);margin:8px 0 12px}
+.step h3{margin-bottom:8px;font-size:18px}
+.step p{color:var(--muted);font-size:14px;line-height:1.6}
+.cta{text-align:center;background:linear-gradient(120deg,rgba(255,123,0,.18),rgba(255,255,255,.05));border:1px solid var(--line);border-radius:18px;margin:0 60px;padding:50px 20px}
+.cta h2{margin-bottom:12px}
+.cta p{color:var(--muted);margin-bottom:24px}
+
+/* FOOTER */
+.footer{background:linear-gradient(120deg,#141e30,#0d1722);padding:60px;margin-top:70px}
+.footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px}
+.footer h3,.footer h4{color:var(--accent);margin-bottom:15px}
+.footer p{color:var(--muted);line-height:1.6}
+.footer a{display:block;color:#ccc;text-decoration:none;margin-bottom:8px;transition:.3s}
+.footer a:hover{color:var(--accent);padding-left:5px}
+.footer-bottom{text-align:center;margin-top:40px;color:#aaa}
+
+/* REVEAL */
+.fade-in{opacity:0;transform:translateY(40px);transition:all .9s ease}
+.fade-in.appear{opacity:1;transform:none}
+
+/* TOAST */
+#toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,30px);background:#111;border-left:4px solid var(--accent);padding:12px 22px;border-radius:8px;opacity:0;pointer-events:none;transition:.4s;z-index:10001}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#toast.error{border-color:#ff4d4d}
+
+/* CHATBOT */
+#chatbot-btn{display:none !important;}
+#chatbot-box{display:none !important;}
+#chatbot-box.open{display:flex;animation:pop .25s ease}
+@keyframes pop{from{opacity:0;transform:translateY(15px) scale(.97)}}
+#chatbot-header{background:var(--accent);padding:14px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+#chatbot-header button{background:none;border:0;color:#fff;font-size:18px;cursor:pointer}
+#chatbot-messages{flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:85%;padding:9px 13px;border-radius:14px;font-size:14px;line-height:1.5;color:#eee}
+.msg.bot{background:#222;border-bottom-left-radius:4px;align-self:flex-start}
+.msg.user{background:var(--accent);border-bottom-right-radius:4px;align-self:flex-end}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px}
+.chips button{background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer;transition:.2s}
+.chips button:hover{background:var(--accent);color:#fff}
+.dots span{display:inline-block;width:6px;height:6px;margin:0 2px;border-radius:50%;background:#888;animation:dot 1s infinite}
+.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+@keyframes dot{50%{transform:translateY(-5px);background:var(--accent)}}
+#chatbot-input{display:flex;border-top:1px solid #333}
+#chatbot-input input{flex:1;padding:12px;border:0;background:#222;color:#fff;outline:0}
+#chatbot-input button{padding:0 18px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+
+/* AUTH MODAL */
+#admin-modal{position:fixed;inset:0;background:rgba(1,10,30,.75);backdrop-filter:blur(4px);display:none;justify-content:center;align-items:center;z-index:9999;padding:16px}
+#admin-modal.open{display:flex}
+.modal{background:#16223a;border:1px solid var(--line);padding:30px;border-radius:14px;width:380px;max-width:100%;position:relative;animation:pop .25s ease}
+.modal h2{text-align:center;color:var(--accent);margin-bottom:18px}
+.tabs{display:flex;background:#0d1730;border-radius:30px;margin-bottom:20px;padding:4px}
+.tabs button{flex:1;padding:9px;border:0;border-radius:30px;background:transparent;color:#fff;cursor:pointer;font-weight:600;transition:.3s}
+.tabs button.active{background:var(--accent)}
+.field{position:relative;margin-bottom:14px}
+.field input,.field select{width:100%;padding:12px 40px 12px 12px;border:1px solid var(--line);border-radius:8px;background:#0d1730;color:#fff;outline:0}
+.field input:focus,.field select:focus{border-color:var(--accent)}
+.field i{position:absolute;top:50%;right:13px;transform:translateY(-50%);cursor:pointer;color:var(--accent)}
+.meter{height:4px;border-radius:4px;background:#0d1730;margin:-6px 0 14px;overflow:hidden}
+.meter div{height:100%;width:0;transition:.3s}
+.err{color:#ff8080;font-size:13px;min-height:18px;margin-bottom:8px}
+.forgot{text-align:right;font-size:13px;color:var(--accent);cursor:pointer;margin:-4px 0 12px}
+.submit{width:100%;padding:12px;border:0;border-radius:30px;background:var(--accent);color:#fff;font-weight:700;cursor:pointer;transition:.3s}
+.submit:hover{background:var(--accent2)}
+.close{position:absolute;top:14px;right:16px;background:none;border:0;color:var(--accent);font-size:20px;cursor:pointer}
+.hidden{display:none!important}
+
+/* RESPONSIVE */
+@media(max-width:992px){
+ .navbar,.navbar.scrolled{padding:14px 24px}
+ .hero{flex-direction:column;text-align:center;padding:50px 24px}
+ section{padding:50px 24px}.cta{margin:0 24px}
+ .stats,.steps{grid-template-columns:repeat(2,1fr)}
+ .footer{padding:50px 24px}.footer-grid{grid-template-columns:repeat(2,1fr)}
+ .menu-btn{display:block}
+ nav{position:absolute;top:100%;left:0;width:100%;flex-direction:column;gap:0;background:rgba(1,18,50,.97);max-height:0;overflow:hidden;transition:max-height .4s}
+ nav.open{max-height:360px}
+ nav a{padding:14px 24px;width:100%;text-align:left}
+ #admin-link{border:0;border-radius:0}
+}
+@media(max-width:600px){
+ .stats,.steps,.footer-grid{grid-template-columns:1fr}
+ #chatbot-box{width:92%;right:4%;bottom:90px}
+ .modal{width:100%;max-width:360px;padding:25px 18px;border-radius:14px}
+ .modal h2{font-size:20px;margin-bottom:14px}
+ .field input,.field select{padding:11px 36px 11px 12px;font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}.fade-in{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div id="particles-js"></div>
+
+<header class="navbar" id="navbar">
+  <a class="logo" href="#home">Seva<span>Setu</span></a>
+  <button class="menu-btn" id="menu-btn" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+  <nav id="nav">
+    <a href="#how">How It Works</a>
+    <a href="legal-links/about.html">About</a>
+    <a href="legal-links/contact.html">Contact</a>
+    <a id="admin-link" role="button" tabindex="0"><i class="fa-solid fa-user"></i> Login / Register</a>
+  </nav>
+</header>
+
+<main id="home">
+<section class="hero fade-in">
+  <div class="hero-text">
+    <h1>A Bridge Between <span>Care</span> and <span>Need</span></h1>
+    <p>SevaSetu connects donors directly with orphanages and old-age homes, ensuring transparency, trust, and timely help.<br>
+    Donate <span class="typed" id="typed"></span></p>
+    <a href="Role.html" class="btn primary">Get Started</a>
+    <a href="#how" class="btn secondary">How It Works</a>
+  </div>
+  <div class="hero-image"><img src="snew_logo-removebg-preview.png" alt="SevaSetu logo"></div>
+</section>
+
+<section class="stats fade-in" aria-label="Impact">
+  <div class="stat"><b data-target="1200" data-suffix="+">0</b><small>Donors</small></div>
+  <div class="stat"><b data-target="85" data-suffix="+">0</b><small>Verified care homes</small></div>
+  <div class="stat"><b data-target="4500" data-suffix="+">0</b><small>Donations delivered</small></div>
+  <div class="stat"><b data-target="100" data-suffix="%">0</b><small>Transparent tracking</small></div>
+</section>
+
+<section id="how" class="fade-in">
+  <h2 class="section-title">How SevaSetu works</h2>
+  <p class="section-sub">From sign-up to delivery, every step is visible to both sides.</p>
+  <div class="steps">
+    <div class="step"><i class="fa-solid fa-user-plus"></i><h3>Register</h3><p>Donors and care homes create an account and choose their role.</p></div>
+    <div class="step"><i class="fa-solid fa-list-check"></i><h3>Post needs</h3><p>Care homes list what they need: food, clothes, medicine or funds.</p></div>
+    <div class="step"><i class="fa-solid fa-hand-holding-heart"></i><h3>Donate</h3><p>Donors pick a need and give directly, with no middlemen.</p></div>
+    <div class="step"><i class="fa-solid fa-circle-check"></i><h3>Track delivery</h3><p>Both sides get updates until the donation is received.</p></div>
+  </div>
+</section>
+
+
+
+<div class="cta fade-in">
+  <h2>Ready to make a difference?</h2>
+  <p>Join as a donor or register your care home today.</p>
+  <a href="Role.html" class="btn primary">Choose your role</a>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div><h3>SevaSetu</h3><p>A digital bridge connecting donors and care homes with transparency and compassion.</p></div>
+    <div><h4>Quick Links</h4>
+      <a href="#home">Home</a>
+      <a href="legal-links/about.html">About</a>
+      <a href="#how">How It Works</a>
+      <a href="legal-links/contact.html">Contact</a></div>
+    <div><h4>Legal</h4>
+      <a href="legal-links/terms.html">Terms &amp; Conditions</a>
+      <a href="legal-links/Cookies.html">Cookie Policy</a>
+      <a href="legal-links/Privacy-Policy.html">Privacy Policy</a></div>
+    <div><h4>Support</h4>
+      <a href="legal-links/help.html">Help Center</a>
+      <a href="legal-links/faq.html">FAQs</a>
+      <a href="legal-links/volunteer.html">Volunteer</a>
+      <a href="legal-links/report.html">Report Issue</a></div>
+  </div>
+  <div class="footer-bottom">© 2026 SevaSetu. All Rights Reserved.</div>
+</footer>
+
+<div id="toast" role="status"></div>
+
+<!-- CHATBOT -->
+<button id="chatbot-btn" aria-label="Open chat"><i class="fa-solid fa-robot"></i></button>
+<div id="chatbot-box" role="dialog" aria-label="SevaBot chat">
+  <div id="chatbot-header"><span><i class="fa-solid fa-robot"></i> SevaBot</span><button id="close-chat" aria-label="Close chat"><i class="fa-solid fa-xmark"></i></button></div>
+  <div id="chatbot-messages"></div>
+  <div class="chips" id="chips"></div>
+  <div id="chatbot-input">
+    <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" maxlength="200">
+    <button id="send-btn" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div id="admin-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+  <div class="modal">
+    <button class="close" id="close-admin" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <h2 id="auth-title">Welcome to SevaSetu</h2>
+    <div class="tabs">
+      <button id="tab-login" class="active" type="button">Login</button>
+      <button id="tab-register" type="button">Register</button>
+    </div>
+    <div class="field hidden" id="f-name"><input type="text" id="auth-name" placeholder="Full name" autocomplete="name"></div>
+    <div class="field hidden" id="f-role">
+      <select id="auth-role"><option value="Donor">I am a Donor</option><option value="Orphanage">I represent an Orphanage</option><option value="Old Age Home">I represent an Old Age Home</option></select>
+    </div>
+    <div class="field"><input type="email" id="admin-email" placeholder="Email" autocomplete="email"></div>
+    <div class="field"><input type="password" id="admin-password" placeholder="Password" autocomplete="current-password"><i id="toggle-password" class="fa-solid fa-eye" role="button" aria-label="Show password"></i></div>
+    <div class="meter hidden" id="meter"><div id="meter-bar"></div></div>
+    <div class="field hidden" id="f-confirm"><input type="password" id="auth-confirm" placeholder="Confirm password" autocomplete="new-password"></div>
+    <div class="forgot" id="forgot">Forgot Password?</div>
+    <div class="err" id="auth-err" aria-live="polite"></div>
+    <button class="submit" id="admin-login-btn">Login</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* Particles (skipped on reduced motion) */
+if (window.particlesJS && !reduce) {
+  particlesJS("particles-js", {particles:{number:{value:innerWidth < 700 ? 30 : 70},size:{value:3},color:{value:"#ff7b00"},
+    line_linked:{enable:true,distance:150,color:"#ff7b00",opacity:.4},move:{speed:2}},
+    interactivity:{events:{onhover:{enable:true,mode:"grab"}}}});
+}
+
+/* Toast */
+let toastT;
+function toast(msg, isErr) {
+  const t = $("toast"); t.textContent = msg; t.className = "show" + (isErr ? " error" : "");
+  clearTimeout(toastT); toastT = setTimeout(() => t.className = "", 3000);
+}
+
+/* Navbar: scroll state, progress bar, mobile menu */
+addEventListener("scroll", () => {
+  $("navbar").classList.toggle("scrolled", scrollY > 30);
+  const h = document.documentElement;
+  $("progress").style.width = (scrollY / (h.scrollHeight - h.clientHeight) * 100) + "%";
+}, {passive:true});
+$("menu-btn").onclick = () => $("nav").classList.toggle("open");
+$("nav").addEventListener("click", e => { if (e.target.closest("a") && e.target.id !== "admin-link") $("nav").classList.remove("open"); });
+
+/* Typing effect */
+const words = ["food to a child","medicine to an elder","clothes to a family","hope to a home"];
+let wi = 0, ci = 0, del = false;
+(function type() {
+  const w = words[wi];
+  $("typed").textContent = w.slice(0, ci);
+  if (reduce) { $("typed").textContent = words[0]; return; }
+  if (!del && ci++ === w.length) { del = true; return setTimeout(type, 1400); }
+  if (del && --ci === 0) { del = false; wi = (wi + 1) % words.length; }
+  setTimeout(type, del ? 40 : 80);
+})();
+
+/* Scroll reveal + counters */
+function count(el) {
+  const target = +el.dataset.target, suf = el.dataset.suffix || "";
+  if (reduce) { el.textContent = target.toLocaleString() + suf; return; }
+  const start = performance.now(), dur = 1600;
+  (function tick(now) {
+    const p = Math.min((now - start) / dur, 1);
+    el.textContent = Math.floor(target * (1 - Math.pow(1 - p, 3))).toLocaleString() + suf;
+    if (p < 1) requestAnimationFrame(tick);
+  })(start);
+}
+const io = new IntersectionObserver((entries, obs) => entries.forEach(en => {
+  if (!en.isIntersecting) return;
+  en.target.classList.add("appear");
+  en.target.querySelectorAll("[data-target]").forEach(count);
+  obs.unobserve(en.target);
+}), {threshold:.2});
+document.querySelectorAll(".fade-in").forEach(el => io.observe(el));
+
+/* ============ AUTH (demo: localStorage + SHA-256; use a real backend in production) ============ */
+const modal = $("admin-modal"), errBox = $("auth-err");
+let mode = "login";
+const store = {
+  users: () => { try { return JSON.parse(localStorage.getItem("ss_users") || "{}"); } catch { return {}; } },
+  saveUsers: u => localStorage.setItem("ss_users", JSON.stringify(u)),
+  session: () => { try { return JSON.parse(localStorage.getItem("ss_session")); } catch { return null; } }
+};
+async function hash(s) {
+  if (!crypto.subtle) return btoa(s);
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+function setMode(m) {
+  mode = m; errBox.textContent = "";
+  const reg = m === "register";
+  $("tab-login").classList.toggle("active", !reg); $("tab-register").classList.toggle("active", reg);
+  ["f-name","f-role","f-confirm","meter"].forEach(id => $(id).classList.toggle("hidden", !reg));
+  $("forgot").classList.toggle("hidden", reg);
+  $("admin-login-btn").textContent = reg ? "Create account" : "Login";
+  $("admin-password").autocomplete = reg ? "new-password" : "current-password";
+}
+function openModal() { modal.classList.add("open"); setTimeout(() => $("admin-email").focus(), 50); }
+function closeModal() { modal.classList.remove("open"); errBox.textContent = ""; }
+function renderSession() {
+  const s = store.session(), link = $("admin-link");
+  if (s) { link.innerHTML = `<i class="fa-solid fa-circle-user"></i> ${s.name.split(" ")[0]} · Logout`; }
+  else { link.innerHTML = `<i class="fa-solid fa-user"></i> Login / Register`; }
+}
+$("admin-link").addEventListener("click", () => {
+  if (store.session()) { localStorage.removeItem("ss_session"); renderSession(); toast("Logged out"); }
+  else openModal();
+  $("nav").classList.remove("open");
+});
+$("admin-link").addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.target.click(); } });
+$("close-admin").onclick = closeModal;
+modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+$("tab-login").onclick = () => setMode("login");
+$("tab-register").onclick = () => setMode("register");
+$("toggle-password").onclick = e => {
+  const p = $("admin-password"), show = p.type === "password";
+  p.type = show ? "text" : "password";
+  e.target.classList.toggle("fa-eye", !show); e.target.classList.toggle("fa-eye-slash", show);
+};
+$("admin-password").addEventListener("input", e => {
+  const v = e.target.value;
+  const score = [v.length >= 8, /[A-Z]/.test(v), /[0-9]/.test(v), /[^A-Za-z0-9]/.test(v)].filter(Boolean).length;
+  const bar = $("meter-bar"); bar.style.width = score * 25 + "%";
+  bar.style.background = ["#ff4d4d","#ff4d4d","#ffb300","#9acd32","#2ecc71"][score];
+});
+$("forgot").onclick = () => window.location.href = "forgot-password.html";
+
+$("admin-login-btn").onclick = async () => {
+  const email = $("admin-email").value.trim().toLowerCase(), pass = $("admin-password").value;
+  const fail = m => { errBox.textContent = m; };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail("Enter a valid email address.");
+  if (pass.length < 6) return fail("Password must be at least 6 characters.");
+
+  if (mode === "register") {
+    const name = $("auth-name").value.trim();
+    const role = $("auth-role").value;
+    if (name.length < 2) return fail("Enter your full name.");
+    if (pass !== $("auth-confirm").value) return fail("Passwords do not match.");
+
+    const apiBase = window.API_BASE || (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
+    try {
+      const res = await fetch(`${apiBase}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role, name, email, password: pass })
+      });
+      const data = await res.json();
+      if (!data.success) return fail(data.message || "Registration failed.");
+
+      toast("Registration submitted! ⏳ Pending Admin Approval.");
+      closeModal();
+      setMode("login");
+      return;
+    } catch(err) {
+      toast("Registration submitted! ⏳ Pending Admin Approval.");
+      closeModal();
+      return;
+    }
+  } else {
+    // LOGIN
+    const apiBase = window.API_BASE || (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
+    try {
+      const res = await fetch(`${apiBase}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: pass })
+      });
+      const data = await res.json();
+      if (data.status === 'pending') {
+        return fail("⏳ Account Pending Review: Your registration is awaiting Admin verification.");
+      }
+      if (data.status === 'rejected') {
+        return fail("❌ Registration Rejected: Your account was not approved by Admin.");
+      }
+      if (!data.success) {
+        return fail(data.message || "Email or password is incorrect.");
+      }
+
+      localStorage.setItem("sevasetu_currentUser", JSON.stringify(data.user));
+      localStorage.setItem("ss_session", JSON.stringify({ email, name: data.user.name, role: data.user.role }));
+      toast(`Welcome back, ${data.user.name}!`);
+      closeModal();
+
+      if (data.user.role === 'admin') {
+        setTimeout(() => window.location.href = "admin.html", 800);
+      } else if (data.user.role === 'donor') {
+        setTimeout(() => window.location.href = "Dashboard/Donor-dashboard.html", 800);
+      } else if (data.user.role === 'orphanage') {
+        setTimeout(() => window.location.href = "orphanage.html", 800);
+      } else if (data.user.role === 'oldage') {
+        setTimeout(() => window.location.href = "old-ageDashbord/Dashboard00.html", 800);
+      }
+      return;
+    } catch(err) {
+      const users = store.users(), h = await hash(pass);
+      const u = users[email];
+      if (!u || u.h !== h) return fail("Email or password is incorrect.");
+      localStorage.setItem("ss_session", JSON.stringify({email, name:u.name, role:u.role}));
+      toast(`Welcome back, ${u.name.split(" ")[0]}!`);
+      closeModal();
+      if (u.role === 'admin') {
+        setTimeout(() => window.location.href = "admin.html", 800);
+      } else if (u.role === 'donor') {
+        setTimeout(() => window.location.href = "Dashboard/Donor-dashboard.html", 800);
+      } else if (u.role === 'orphanage') {
+        setTimeout(() => window.location.href = "orphanage.html", 800);
+      } else if (u.role === 'oldage') {
+        setTimeout(() => window.location.href = "old-ageDashbord/Dashboard00.html", 800);
+      }
+    }
+  }
+  ["admin-email","admin-password","auth-name","auth-confirm"].forEach(id => $(id).value = "");
+};
+modal.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.tagName === "INPUT") $("admin-login-btn").click(); });
+renderSession(); setMode("login");
+
+/* ============ CHATBOT ============ */
+const box = $("chatbot-box"), msgs = $("chatbot-messages"), input = $("user-input");
+const intents = [
+  {k:["hello","hi","hey","namaste"], r:"Namaste! 👋 Welcome to SevaSetu. What would you like to know?"},
+  {k:["donate","donation","give"], r:"Pick your role via Get Started, then choose a verified care home's need and donate directly. 💖"},
+  {k:["register","sign up","signup","join"], r:"Click Login/Register at the top and switch to the Register tab. It takes under a minute. 😊"},
+  {k:["login","log in","password"], r:"Use Login/Register at the top. Forgot your password? Reset support is coming soon. 🔐"},
+  {k:["orphanage","orphan","child"], r:"Orphanages can register, post their needs, and receive donations directly. 🏠"},
+  {k:["old age","elder","senior"], r:"Old age homes can register and list needs like medicine, food and essentials. 👴👵"},
+  {k:["volunteer"], r:"Want to volunteer? Visit the Volunteer page in the footer. 🙌"},
+  {k:["safe","trust","verify","transparent"], r:"Every care home is verified, and donors can track delivery updates. 🔎"},
+  {k:["contact","support","email"], r:"Reach us through the Contact page in the top menu. 📞"},
+  {k:["report","issue","problem"], r:"Use Report Issue in the footer and we'll look into it. 🛠️"},
+  {k:["help"], r:"Sure! Ask me about donating, registering, orphanages, old age homes, or volunteering. 🤝"},
+  {k:["thank"], r:"You're welcome! 🙏"}
+];
+const chipList = ["How to donate?","Register","Volunteer","Is it safe?"];
+function addMsg(text, who) {
+  const d = document.createElement("div");
+  d.className = "msg " + who; d.textContent = text;   // textContent: safe from XSS
+  msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; return d;
+}
+function reply(text) {
+  const t = text.toLowerCase();
+  const hit = intents.find(i => i.k.some(k => t.includes(k)));
+  return hit ? hit.r : "Sorry, I didn't get that 😅 Try asking about donating, registering, or volunteering.";
+}
+function send(text) {
+  text = (text ?? input.value).trim(); if (!text) return;
+  addMsg(text, "user"); input.value = "";
+  const typing = document.createElement("div");
+  typing.className = "msg bot dots"; typing.innerHTML = "<span></span><span></span><span></span>";
+  msgs.appendChild(typing); msgs.scrollTop = msgs.scrollHeight;
+  setTimeout(() => { typing.remove(); addMsg(reply(text), "bot"); }, 700);
+}
+chipList.forEach(c => { const b = document.createElement("button"); b.textContent = c; b.onclick = () => send(c); $("chips").appendChild(b); });
+function toggleChat(open) {
+  box.classList.toggle("open", open);
+  if (open) { if (!msgs.children.length) addMsg("Hello! I'm SevaBot. How can I help you today?", "bot"); input.focus(); }
+}
+$("chatbot-btn").onclick = () => toggleChat(!box.classList.contains("open"));
+$("close-chat").onclick = () => toggleChat(false);
+$("send-btn").onclick = () => send();
+input.addEventListener("keydown", e => { if (e.key === "Enter") send(); });
+
+/* Escape closes overlays */
+addEventListener("keydown", e => { if (e.key === "Escape") { closeModal(); toggleChat(false); } });
+</script>
+
+<!-- Real-Time WebSockets & API -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="realtime.js"></script>
+<!-- Real-Time Live Chat Widget -->
+<script src="chat-widget.js"></script>
+
+<!-- Register PWA Service Worker -->
+<script src="/pwa-install.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SevaSetu PWA registered:', reg.scope))
+      .catch(err => console.log('PWA register failed:', err));
+  });
+}
+</script>
+</body>
+</html>
