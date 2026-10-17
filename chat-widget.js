@@ -404,7 +404,10 @@
         const apiBase = window.API_BASE || (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
         let messages = [];
         try {
-            const res = await fetch(`${apiBase}/api/chat/messages`);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 1200);
+            const res = await fetch(`${apiBase}/api/chat/messages`, { signal: controller.signal });
+            clearTimeout(timeoutId);
             if(res.ok){
                 const data = await res.json();
                 if(data.success && Array.isArray(data.messages)){

@@ -84,7 +84,11 @@
     function initSocket() {
         if (typeof io !== 'undefined') {
             try {
-                socket = io(API_BASE);
+                socket = io(API_BASE, {
+                    timeout: 2500,
+                    reconnectionAttempts: 3,
+                    transports: ['websocket', 'polling']
+                });
 
                 socket.on('connect', () => {
                     console.log('⚡ Connected to SevaSetu Real-Time Socket Server');
@@ -166,6 +170,21 @@
             } catch (err) {
                 console.warn('Server offline, using localStorage fallback');
                 return { success: false, message: 'Server unreachable. Using local storage mode.' };
+            }
+        },
+
+        // Auth: Register User/Organization on SQLite Backend
+        async register(userData) {
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+                return await res.json();
+            } catch (err) {
+                console.warn('Server offline during registration:', err.message);
+                return { success: false, message: 'Server offline' };
             }
         },
 

@@ -84,7 +84,11 @@
     function initSocket() {
         if (typeof io !== 'undefined') {
             try {
-                socket = io(API_BASE);
+                socket = io(API_BASE, {
+                    timeout: 2500,
+                    reconnectionAttempts: 3,
+                    transports: ['websocket', 'polling']
+                });
 
                 socket.on('connect', () => {
                     console.log('⚡ Connected to SevaSetu Real-Time Socket Server');
