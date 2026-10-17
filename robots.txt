@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /Dashboard/profile.html
+Disallow: /sevasetu.db*
+
+Sitemap: https://yazantechofficial89.github.io/Sevasetu/sitemap.xml
