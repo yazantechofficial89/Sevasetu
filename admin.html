@@ -594,41 +594,91 @@ let allUsers = [];
 let activeFilter = 'pending';
 
 async function fetchAdminStats(){
+    let pendingCount = allUsers.filter(u => (u.status || 'pending') === 'pending').length;
+    let approvedCount = allUsers.filter(u => u.status === 'approved').length;
+    let rejectedCount = allUsers.filter(u => u.status === 'rejected').length;
+    let totalOrgs = allUsers.filter(u => u.role === 'orphanage' || u.role === 'oldage').length;
+    let totalDonors = allUsers.filter(u => u.role === 'donor').length;
+
     try {
         const res = await fetch(`${apiBase}/api/admin/stats`);
         if(res.ok){
             const data = await res.json();
             if(data.success && data.stats){
-                document.getElementById('statPending').innerText = data.stats.pendingCount;
-                document.getElementById('statApproved').innerText = data.stats.approvedCount;
-                document.getElementById('statOrgs').innerText = data.stats.totalOrgs;
-                document.getElementById('statDonors').innerText = data.stats.totalDonors;
-                document.getElementById('countPendingTab').innerText = data.stats.pendingCount;
+                pendingCount = Math.max(pendingCount, data.stats.pendingCount);
+                approvedCount = Math.max(approvedCount, data.stats.approvedCount);
+                totalOrgs = Math.max(totalOrgs, data.stats.totalOrgs);
+                totalDonors = Math.max(totalDonors, data.stats.totalDonors);
             }
         }
     } catch(e){}
+
+    document.getElementById('statPending').innerText = pendingCount;
+    document.getElementById('statApproved').innerText = approvedCount;
+    document.getElementById('statOrgs').innerText = totalOrgs;
+    document.getElementById('statDonors').innerText = totalDonors;
+    document.getElementById('countPendingTab').innerText = pendingCount;
 }
 
 async function fetchUsers(){
+    let serverUsers = [];
+    let serverOk = false;
+
     try {
         const res = await fetch(`${apiBase}/api/admin/users?status=all`);
         if(res.ok){
             const data = await res.json();
             if(data.success && Array.isArray(data.users)){
-                allUsers = data.users;
+                serverUsers = data.users;
+                serverOk = true;
             }
         }
     } catch(e){
-        // Fallback for offline file mode
-        let donors = JSON.parse(localStorage.getItem('sevasetu_donors') || '[]');
-        let oldage = JSON.parse(localStorage.getItem('sevasetu_oldage_users') || '[]');
-        let orphanages = JSON.parse(localStorage.getItem('sevasetu_orphanage_users') || '[]');
-        allUsers = [
-            ...donors.map(d => ({ ...d, role: 'donor', status: d.status || 'pending' })),
-            ...oldage.map(h => ({ ...h, name: h.homeName, role: 'oldage', status: h.status || 'pending' })),
-            ...orphanages.map(o => ({ ...o, name: o.orgName, role: 'orphanage', status: o.status || 'pending' }))
-        ];
+        serverOk = false;
     }
+
+    // Load local storage collections
+    let donors = JSON.parse(localStorage.getItem('sevasetu_donors') || '[]');
+    let oldage = JSON.parse(localStorage.getItem('sevasetu_oldage_users') || '[]');
+    let orphanages = JSON.parse(localStorage.getItem('sevasetu_orphanage_users') || '[]');
+    let cached = JSON.parse(localStorage.getItem('sevasetu_admin_cached_users') || '[]');
+    const overrides = JSON.parse(localStorage.getItem('sevasetu_admin_status_overrides') || '{}');
+
+    // Build unified list starting from server or cached
+    let merged = serverOk ? [...serverUsers] : [...cached];
+
+    // Helper to check if email already exists in list
+    const hasEmail = em => em && merged.some(u => u.email && u.email.toLowerCase() === em.toLowerCase());
+
+    // Merge any localStorage users
+    donors.forEach(d => {
+        if(!hasEmail(d.email)){
+            merged.push({ id: d.id || ('d_' + Date.now()), ...d, role: 'donor', status: d.status || 'pending' });
+        }
+    });
+    oldage.forEach(h => {
+        if(!hasEmail(h.email)){
+            merged.push({ id: h.id || ('o_' + Date.now()), ...h, name: h.homeName || h.name, role: 'oldage', status: h.status || 'pending' });
+        }
+    });
+    orphanages.forEach(o => {
+        if(!hasEmail(o.email)){
+            merged.push({ id: o.id || ('orp_' + Date.now()), ...o, name: o.orgName || o.name, role: 'orphanage', status: o.status || 'pending' });
+        }
+    });
+
+    // Apply any saved approval/rejection overrides
+    merged.forEach(u => {
+        const em = (u.email || '').toLowerCase();
+        if(overrides[em]){
+            u.status = overrides[em];
+        } else if(u.id && overrides['id_' + u.id]){
+            u.status = overrides['id_' + u.id];
+        }
+    });
+
+    allUsers = merged;
+    localStorage.setItem('sevasetu_admin_cached_users', JSON.stringify(allUsers));
 
     renderTable();
     fetchAdminStats();
@@ -682,15 +732,17 @@ function renderTable(){
         const row = document.createElement('tr');
         const role = u.role || 'donor';
         const status = u.status || 'pending';
+        const safeEmail = escapeHtml(u.email || '');
+        const safeId = (typeof u.id === 'number' || (typeof u.id === 'string' && /^\d+$/.test(u.id))) ? u.id : 'null';
 
         let actionHtml = '';
         if(status === 'pending'){
             actionHtml = `
                 <div class="action-btns">
-                    <button class="btn-approve" onclick="approveUser(${u.id})">
+                    <button class="btn-approve" onclick="approveUser(${safeId}, '${safeEmail}')">
                         <i class="fa-solid fa-check"></i> Approve
                     </button>
-                    <button class="btn-reject" onclick="rejectUser(${u.id})">
+                    <button class="btn-reject" onclick="rejectUser(${safeId}, '${safeEmail}')">
                         <i class="fa-solid fa-xmark"></i> Reject
                     </button>
                 </div>
@@ -699,13 +751,13 @@ function renderTable(){
             actionHtml = `
                 <div class="action-btns">
                     <span style="color:#34d399;font-size:12px;"><i class="fa-solid fa-check-double"></i> Verified</span>
-                    <button class="btn-reject" style="padding:4px 8px;font-size:11px;" onclick="rejectUser(${u.id})">Revoke</button>
+                    <button class="btn-reject" style="padding:4px 8px;font-size:11px;" onclick="rejectUser(${safeId}, '${safeEmail}')">Revoke</button>
                 </div>
             `;
         } else {
             actionHtml = `
                 <div class="action-btns">
-                    <button class="btn-approve" style="padding:4px 10px;font-size:11px;" onclick="approveUser(${u.id})">Re-Approve</button>
+                    <button class="btn-approve" style="padding:4px 10px;font-size:11px;" onclick="approveUser(${safeId}, '${safeEmail}')">Re-Approve</button>
                 </div>
             `;
         }
@@ -722,7 +774,7 @@ function renderTable(){
                 </span>
             </td>
             <td>
-                <span style="color:#ffb774;"><i class="fa-solid fa-envelope"></i> ${escapeHtml(u.email || 'N/A')}</span><br>
+                <span style="color:#ffb774;"><i class="fa-solid fa-envelope"></i> ${safeEmail}</span><br>
                 <small style="color:#94a3b8;"><i class="fa-solid fa-phone"></i> ${escapeHtml(u.mobile || 'N/A')}</small>
             </td>
             <td>
@@ -743,52 +795,91 @@ function renderTable(){
     });
 }
 
-async function approveUser(userId){
+async function approveUser(userId, email){
+    // 1. Update in memory immediately
+    const user = allUsers.find(u => (userId && userId !== 'null' && u.id == userId) || (email && u.email && u.email.toLowerCase() === email.toLowerCase()));
+    if(user) user.status = 'approved';
+    renderTable();
+
+    // 2. Persist in localStorage overrides so refresh ALWAYS remembers!
+    const overrides = JSON.parse(localStorage.getItem('sevasetu_admin_status_overrides') || '{}');
+    if(email) overrides[email.toLowerCase()] = 'approved';
+    if(userId && userId !== 'null') overrides['id_' + userId] = 'approved';
+    localStorage.setItem('sevasetu_admin_status_overrides', JSON.stringify(overrides));
+
+    // 3. Update localStorage collections
+    ['sevasetu_donors', 'sevasetu_oldage_users', 'sevasetu_orphanage_users'].forEach(k => {
+        let list = JSON.parse(localStorage.getItem(k) || '[]');
+        list.forEach(item => {
+            if ((email && item.email && item.email.toLowerCase() === email.toLowerCase()) || (userId && userId !== 'null' && item.id == userId)) {
+                item.status = 'approved';
+            }
+        });
+        localStorage.setItem(k, JSON.stringify(list));
+    });
+
+    // 4. Update cached users list
+    localStorage.setItem('sevasetu_admin_cached_users', JSON.stringify(allUsers));
+    fetchAdminStats();
+
+    // 5. Send to backend database
     try {
-        const res = await fetch(`${apiBase}/api/admin/approve-user`, {
+        const payload = {};
+        if(userId && userId !== 'null') payload.user_id = userId;
+        if(email) payload.email = email;
+
+        await fetch(`${apiBase}/api/admin/approve-user`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: userId })
+            body: JSON.stringify(payload)
         });
-        const data = await res.json();
-        if(data.success){
-            // Update local memory
-            const user = allUsers.find(u => u.id === userId);
-            if(user) user.status = 'approved';
-            renderTable();
-            fetchAdminStats();
-        } else {
-            alert(data.message || 'Approval failed');
-        }
-    } catch(e){
-        // Offline fallback
-        const user = allUsers.find(u => u.id === userId);
-        if(user) user.status = 'approved';
-        renderTable();
+    } catch(e) {
+        console.log('Saved in local storage (server offline)');
     }
 }
 
-async function rejectUser(userId){
+async function rejectUser(userId, email){
     if(!confirm("Are you sure you want to reject this registration?")) return;
+
+    // 1. Update in memory immediately
+    const user = allUsers.find(u => (userId && userId !== 'null' && u.id == userId) || (email && u.email && u.email.toLowerCase() === email.toLowerCase()));
+    if(user) user.status = 'rejected';
+    renderTable();
+
+    // 2. Persist in localStorage overrides
+    const overrides = JSON.parse(localStorage.getItem('sevasetu_admin_status_overrides') || '{}');
+    if(email) overrides[email.toLowerCase()] = 'rejected';
+    if(userId && userId !== 'null') overrides['id_' + userId] = 'rejected';
+    localStorage.setItem('sevasetu_admin_status_overrides', JSON.stringify(overrides));
+
+    // 3. Update localStorage collections
+    ['sevasetu_donors', 'sevasetu_oldage_users', 'sevasetu_orphanage_users'].forEach(k => {
+        let list = JSON.parse(localStorage.getItem(k) || '[]');
+        list.forEach(item => {
+            if ((email && item.email && item.email.toLowerCase() === email.toLowerCase()) || (userId && userId !== 'null' && item.id == userId)) {
+                item.status = 'rejected';
+            }
+        });
+        localStorage.setItem(k, JSON.stringify(list));
+    });
+
+    // 4. Update cached users list
+    localStorage.setItem('sevasetu_admin_cached_users', JSON.stringify(allUsers));
+    fetchAdminStats();
+
+    // 5. Send to backend database
     try {
-        const res = await fetch(`${apiBase}/api/admin/reject-user`, {
+        const payload = {};
+        if(userId && userId !== 'null') payload.user_id = userId;
+        if(email) payload.email = email;
+
+        await fetch(`${apiBase}/api/admin/reject-user`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: userId })
+            body: JSON.stringify(payload)
         });
-        const data = await res.json();
-        if(data.success){
-            const user = allUsers.find(u => u.id === userId);
-            if(user) user.status = 'rejected';
-            renderTable();
-            fetchAdminStats();
-        } else {
-            alert(data.message || 'Rejection failed');
-        }
-    } catch(e){
-        const user = allUsers.find(u => u.id === userId);
-        if(user) user.status = 'rejected';
-        renderTable();
+    } catch(e) {
+        console.log('Saved in local storage (server offline)');
     }
 }
 
@@ -809,17 +900,26 @@ function escapeHtml(text){
 window.addEventListener('DOMContentLoaded', () => {
     fetchUsers();
 
-    // Real-Time Socket Listener: Automatically adds new registrations to table live!
-    if(window.SevaSetuSocket){
-        window.SevaSetuSocket.on('new_registration', (data) => {
-            console.log('🔔 Live registration received in Admin Portal:', data);
-            if(data.user){
-                allUsers.unshift(data.user);
-                renderTable();
-                fetchAdminStats();
-            }
-        });
+    // Attach WebSocket listener with auto-retry
+    function attachSocketListener(){
+        if(window.SevaSetuSocket){
+            window.SevaSetuSocket.on('new_registration', (data) => {
+                console.log('🔔 Live registration received in Admin Portal:', data);
+                if(data && data.user){
+                    const exists = allUsers.some(u => u.email && u.email.toLowerCase() === data.user.email.toLowerCase());
+                    if(!exists){
+                        allUsers.unshift(data.user);
+                        localStorage.setItem('sevasetu_admin_cached_users', JSON.stringify(allUsers));
+                        renderTable();
+                        fetchAdminStats();
+                    }
+                }
+            });
+        } else {
+            setTimeout(attachSocketListener, 500);
+        }
     }
+    attachSocketListener();
 });
 
 /* PARTICLES */

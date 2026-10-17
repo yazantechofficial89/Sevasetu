@@ -331,7 +331,7 @@ if(donors.some(d => d.email.toLowerCase() === email.toLowerCase())){
     return;
 }
 
-let newDonor = { name, email, mobile, city, password: pass1, status: 'pending', joinedDate: new Date().toLocaleDateString() };
+let newDonor = { id: Date.now(), name, email, mobile, city, password: pass1, status: 'pending', joinedDate: new Date().toLocaleDateString() };
 donors.push(newDonor);
 localStorage.setItem("sevasetu_donors", JSON.stringify(donors));
 
@@ -339,16 +339,19 @@ localStorage.setItem("sevasetu_donors", JSON.stringify(donors));
 localStorage.setItem("sevasetu_lastRegisteredEmail", email);
 
 // Register on Real SQLite Backend Server
-if(window.SevaSetuAPI && window.SevaSetuAPI.register){
-    window.SevaSetuAPI.register({
+const apiBase = window.API_BASE || (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
+fetch(`${apiBase}/api/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
         role: "donor",
         name,
         email,
         mobile,
         city,
         password: pass1
-    });
-}
+    })
+}).catch(err => console.log('Offline fallback used'));
 
 success.innerHTML = `
     <div style="background:rgba(245,158,11,0.15);border:1px solid #f59e0b;padding:15px;border-radius:12px;margin-top:15px;">

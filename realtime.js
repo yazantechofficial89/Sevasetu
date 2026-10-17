@@ -169,6 +169,21 @@
             }
         },
 
+        // Auth: Register User/Organization on SQLite Backend
+        async register(userData) {
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+                return await res.json();
+            } catch (err) {
+                console.warn('Server offline during registration:', err.message);
+                return { success: false, message: 'Server offline' };
+            }
+        },
+
         // Auth: Login
         async login(credentials) {
             try {

@@ -217,17 +217,24 @@ app.get('/api/admin/users', (req, res) => {
 // Approve User Registration
 app.post('/api/admin/approve-user', (req, res) => {
     try {
-        const { user_id } = req.body;
-        if (!user_id) {
-            return res.status(400).json({ success: false, message: 'User ID is required.' });
+        const { user_id, email } = req.body;
+        if (!user_id && !email) {
+            return res.status(400).json({ success: false, message: 'User ID or Email is required.' });
         }
 
-        const user = db.prepare('SELECT * FROM users WHERE id = ?').get(user_id);
+        let user = null;
+        if (user_id) {
+            user = db.prepare('SELECT * FROM users WHERE id = ?').get(user_id);
+        }
+        if (!user && email) {
+            user = db.prepare('SELECT * FROM users WHERE LOWER(email) = ?').get(email.trim().toLowerCase());
+        }
+
         if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found.' });
+            return res.status(404).json({ success: false, message: 'User not found in database.' });
         }
 
-        db.prepare("UPDATE users SET status = 'approved' WHERE id = ?").run(user_id);
+        db.prepare("UPDATE users SET status = 'approved' WHERE id = ?").run(user.id);
 
         // If organization, ensure it is added or marked verified in organizations table
         if (user.role === 'orphanage' || user.role === 'oldage') {
@@ -263,17 +270,24 @@ app.post('/api/admin/approve-user', (req, res) => {
 // Reject User Registration
 app.post('/api/admin/reject-user', (req, res) => {
     try {
-        const { user_id, reason } = req.body;
-        if (!user_id) {
-            return res.status(400).json({ success: false, message: 'User ID is required.' });
+        const { user_id, email, reason } = req.body;
+        if (!user_id && !email) {
+            return res.status(400).json({ success: false, message: 'User ID or Email is required.' });
         }
 
-        const user = db.prepare('SELECT * FROM users WHERE id = ?').get(user_id);
+        let user = null;
+        if (user_id) {
+            user = db.prepare('SELECT * FROM users WHERE id = ?').get(user_id);
+        }
+        if (!user && email) {
+            user = db.prepare('SELECT * FROM users WHERE LOWER(email) = ?').get(email.trim().toLowerCase());
+        }
+
         if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found.' });
+            return res.status(404).json({ success: false, message: 'User not found in database.' });
         }
 
-        db.prepare("UPDATE users SET status = 'rejected' WHERE id = ?").run(user_id);
+        db.prepare("UPDATE users SET status = 'rejected' WHERE id = ?").run(user.id);
 
         io.emit('user_rejected', {
             id: user.id,

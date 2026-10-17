@@ -355,13 +355,16 @@ if(homes.some(h => h.email.toLowerCase() === email.trim().toLowerCase())){
     return;
 }
 
-homes.push({ homeName: name, manager, email: email.trim(), mobile, city, address, residents, medical, needs, regNo, password: pass1, status: 'pending', joinedDate: new Date().toLocaleDateString() });
+homes.push({ id: Date.now(), name, homeName: name, manager, email: email.trim(), mobile, city, address, residents, medical, needs, regNo, password: pass1, status: 'pending', joinedDate: new Date().toLocaleDateString() });
 localStorage.setItem("sevasetu_oldage_users", JSON.stringify(homes));
 localStorage.setItem("sevasetu_lastRegisteredOldAgeEmail", email.trim());
 
 // Register on Real SQLite Backend Server
-if(window.SevaSetuAPI && window.SevaSetuAPI.register){
-    window.SevaSetuAPI.register({
+const apiBase = window.API_BASE || (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
+fetch(`${apiBase}/api/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
         role: "oldage",
         name,
         manager,
@@ -371,8 +374,8 @@ if(window.SevaSetuAPI && window.SevaSetuAPI.register){
         address,
         password: pass1,
         extra_info: { residents, medical, needs, regNo }
-    });
-}
+    })
+}).catch(err => console.log('Offline fallback used'));
 
 success.innerHTML = `
     <div style="background:rgba(245,158,11,0.15);border:1px solid #f59e0b;padding:15px;border-radius:12px;margin-top:15px;">
