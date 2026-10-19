@@ -350,11 +350,13 @@ align-items:center;
 .modal-content{
 background:linear-gradient(135deg, #011232, #0c1c2e);
 border:1px solid #ff7b00;
-padding:35px 25px;
+padding:30px 22px;
 border-radius:22px;
 text-align:center;
-max-width:440px;
-width:90%;
+max-width:520px;
+max-height:88vh;
+overflow-y:auto;
+width:92%;
 box-shadow:0 0 35px rgba(255,123,0,0.4);
 animation:fadeIn 0.3s ease;
 }
@@ -522,6 +524,20 @@ Donating to: <strong id="selectedOrgName">General Charity Fund</strong>
 <h3>Donation Successful!</h3>
 <div class="rzp-id-badge" id="modalPaymentId">ID: pay_982134</div>
 <p id="modalMsg">Thank you for your generous contribution of ₹0 to SevaSetu.</p>
+
+<div id="aiImpactCard" style="display:none;margin:16px 0;background:rgba(255,123,0,0.08);border:1px solid rgba(255,123,0,0.35);border-radius:16px;padding:16px;text-align:left;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <h4 style="color:#ffb366;margin:0;font-size:13px;display:flex;align-items:center;gap:6px;">
+      <i class="fa-solid fa-sparkles"></i> AI Impact & Gratitude Summary
+    </h4>
+    <span style="background:linear-gradient(135deg,#ff7b00,#ff5500);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;">GEMINI AI</span>
+  </div>
+  <p id="aiThankYouLetter" style="font-size:12px;color:#f1f5f9;line-height:1.5;margin-bottom:10px;"></p>
+  <div style="font-size:11px;color:#cbd5e1;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Your Direct Tangible Impact:</div>
+  <ul id="aiImpactList" style="font-size:12px;color:#a7f3d0;margin:0 0 10px 18px;line-height:1.5;"></ul>
+  <div id="aiTaxNotice" style="font-size:11px;color:#fde68a;background:rgba(251,191,36,0.1);padding:8px 10px;border-radius:8px;border:1px solid rgba(251,191,36,0.2);"></div>
+</div>
+
 <div class="modal-actions">
 <button class="modal-btn-primary" onclick="downloadCurrentReceipt()"><i class="fa-solid fa-file-pdf"></i> Download 80G Receipt (PDF)</button>
 <button class="modal-btn-secondary" onclick="window.location.href='history.html'"><i class="fa-solid fa-clock-rotate-left"></i> View in Donation History</button>
@@ -763,10 +779,58 @@ function recordSuccessfulDonation(paymentId, paymentMethod){
     document.getElementById("modalMsg").innerHTML = `Thank you <strong>${donorName}</strong>! Your donation of <strong style="color:#ff7b00;">₹${currentAmount.toLocaleString('en-IN')}</strong> via <strong>${paymentMethod}</strong> for <strong>${selectedOrg}</strong> has been successfully processed.`;
     document.getElementById("successModal").style.display = "flex";
 
+    // 5. Generate and Display AI Impact & Personalized Gratitude
+    loadAIImpactSummary(donorName, currentAmount, selectedOrg, selectedType, paymentId);
+
     // Reset inputs
     document.getElementById("qrcodeWrapper").style.display = "none";
     document.getElementById("amount").value = "";
     document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+}
+
+async function loadAIImpactSummary(donorName, amount, orgName, causeType, paymentId){
+    const card = document.getElementById("aiImpactCard");
+    const letter = document.getElementById("aiThankYouLetter");
+    const list = document.getElementById("aiImpactList");
+    const taxNotice = document.getElementById("aiTaxNotice");
+
+    card.style.display = "block";
+    letter.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Gemini AI is crafting your personalized impact summary...`;
+    list.innerHTML = "";
+    taxNotice.innerHTML = "";
+
+    try {
+        const apiBase = window.API_BASE || (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
+        const res = await fetch(`${apiBase}/api/ai/thank-you-note`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                donor_name: donorName,
+                amount: amount,
+                org_name: orgName,
+                cause_type: causeType,
+                payment_id: paymentId
+            })
+        });
+
+        const data = await res.json();
+        letter.innerHTML = (data.letter_body || `Dear ${donorName}, thank you for your compassionate contribution.`).replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
+        
+        const impacts = data.tangible_impact_points || [
+            `Funds nutritious meals and emergency supplies for residents.`,
+            `Covers essential seasonal requirements and daily welfare.`
+        ];
+        list.innerHTML = impacts.map(p => `<li>${p}</li>`).join('');
+
+        const taxText = data.tax_deduction_summary || `Section 80G Tax Exemption: You can claim a 50% tax deduction on ₹${amount} under Section 80G of the Income Tax Act.`;
+        taxNotice.innerHTML = `<i class="fa-solid fa-receipt"></i> <strong>80G Tax Exemption:</strong> ${taxText}`;
+
+    } catch(err){
+        const meals = Math.floor(amount / 60);
+        letter.innerHTML = `Dear ${donorName}, your kindness of ₹${amount.toLocaleString('en-IN')} brings immense hope and nourishment to ${orgName}. Every life under our shelter is touched by your generosity.`;
+        list.innerHTML = `<li>Provides approximately ${meals > 0 ? meals : 5} wholesome, nutritious meals for residents.</li><li>Directly supports health checkups and seasonal necessities.</li>`;
+        taxNotice.innerHTML = `<i class="fa-solid fa-receipt"></i> <strong>80G Tax Exemption:</strong> You are entitled to a 50% tax deduction (₹${Math.floor(amount * 0.5)}) under Section 80G.`;
+    }
 }
 
 function downloadCurrentReceipt(){

@@ -504,8 +504,17 @@ display:block;
         <input type="text" id="unOrg" value="Happy Old Age Home" required style="width:100%;padding:10px 14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;outline:none;">
       </div>
       <div style="margin-bottom:14px;">
-        <label style="display:block;font-size:12px;color:#cbd5e1;margin-bottom:5px;">Need Title</label>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+          <label style="font-size:12px;color:#cbd5e1;">Need Title</label>
+          <button type="button" onclick="generateAIAppeal()" id="aiAppealBtn" style="background:linear-gradient(135deg,#ff7b00,#ff5500);border:none;border-radius:20px;padding:3px 10px;font-size:11px;color:#fff;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(255,123,0,0.3);">
+            <i class="fa-solid fa-sparkles"></i> ✨ AI Draft Appeal
+          </button>
+        </div>
         <input type="text" id="unTitle" placeholder="e.g. Senior Medical Checkups & Medicines" required style="width:100%;padding:10px 14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;outline:none;">
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:12px;color:#cbd5e1;margin-bottom:5px;">Campaign Story & Transparency Appeal (AI Generated)</label>
+        <textarea id="unDesc" rows="4" placeholder="Click 'AI Draft Appeal' or describe why your elderly residents urgently need this support..." style="width:100%;padding:10px 14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;outline:none;resize:vertical;font-size:13px;"></textarea>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
         <div>
@@ -646,21 +655,79 @@ function closeUrgentNeedModal(){
   document.getElementById("urgentNeedModal").style.display = "none";
 }
 
+async function generateAIAppeal(){
+  const btn = document.getElementById("aiAppealBtn");
+  const org = document.getElementById("unOrg").value || "Happy Old Age Home";
+  const title = document.getElementById("unTitle").value || "Senior Healthcare and Medicine Support";
+  const cat = document.getElementById("unCategory").value || "medical";
+  const target = document.getElementById("unAmount").value || 40000;
+  const descEl = document.getElementById("unDesc");
+
+  const originalText = btn.innerHTML;
+  btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generating with Gemini...`;
+  btn.disabled = true;
+
+  try {
+    const apiBase = window.API_BASE || (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
+    const res = await fetch(`${apiBase}/api/ai/generate-campaign`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        org_name: org,
+        need_title: title,
+        category: cat,
+        target_amount: Number(target),
+        basic_details: `Urgent need of ${cat} for our senior citizens residing at ${org}. Target: Rs ${target}.`
+      })
+    });
+    const data = await res.json();
+    if(data.success && data.detailed_story){
+      if(data.catchy_title && (!document.getElementById("unTitle").value || document.getElementById("unTitle").value.length < 5)){
+        document.getElementById("unTitle").value = data.catchy_title;
+      }
+      if(data.suggested_urgency){
+        document.getElementById("unUrgency").value = data.suggested_urgency;
+      }
+      descEl.value = "";
+      let i = 0;
+      const textToType = data.detailed_story;
+      const interval = setInterval(() => {
+        descEl.value += textToType.slice(i, i + 8);
+        i += 8;
+        if(i >= textToType.length){
+          clearInterval(interval);
+          descEl.value = textToType;
+        }
+      }, 25);
+    } else {
+      descEl.value = `At ${org}, our elderly grandmothers and grandfathers urgently require support for ${cat}. With ₹${target}, we can supply daily medication, doctor visits, nutritious diet, and warm companionship. Every rupee is 100% transparent on SevaSetu with 80G tax benefits.`;
+    }
+  } catch(err){
+    descEl.value = `At ${org}, our elderly grandmothers and grandfathers urgently require support for ${cat}. With ₹${target}, we can supply daily medication, doctor visits, nutritious diet, and warm companionship. Every rupee is 100% transparent on SevaSetu with 80G tax benefits.`;
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}
+
 async function handlePostUrgentNeed(e){
   e.preventDefault();
   const org = document.getElementById("unOrg").value;
   const title = document.getElementById("unTitle").value;
+  const desc = document.getElementById("unDesc").value;
   const category = document.getElementById("unCategory").value;
   const target = document.getElementById("unAmount").value;
   const urgency = document.getElementById("unUrgency").value;
 
+  const apiBase = window.API_BASE || (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
   try {
-    const res = await fetch("http://localhost:5000/api/urgent-needs", {
+    const res = await fetch(`${apiBase}/api/urgent-needs`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         org_name: org,
         title: title,
+        description: desc,
         category: category,
         target_amount: Number(target),
         urgency: urgency

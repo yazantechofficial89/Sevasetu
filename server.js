@@ -736,6 +736,105 @@ app.get('/api/chat/messages', (req, res) => {
 });
 
 // ==========================================
+// 5.5 GOOGLE GEMINI AI ENDPOINTS
+// ==========================================
+const aiService = require('./ai-service');
+
+// AI Status (Active Gemini vs Smart Simulation)
+app.get('/api/ai/status', (req, res) => {
+    res.json({
+        success: true,
+        isGeminiActive: aiService.isGeminiActive(),
+        model: 'gemini-3.8-flash'
+    });
+});
+
+// Feature 1: AI SevaMitra (Smart Multilingual Assistant)
+app.post('/api/ai/chat', async (req, res) => {
+    try {
+        const { message, conversationHistory } = req.body;
+        if (!message) {
+            return res.status(400).json({ success: false, message: 'Message is required.' });
+        }
+        const result = await aiService.chatSevaMitra({ message, conversationHistory });
+        res.json({ success: true, ...result });
+    } catch (err) {
+        console.error('AI Chat Error:', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// Feature 2: AI Donor-Need Matchmaker
+app.post('/api/ai/matchmaker', async (req, res) => {
+    try {
+        const { budget, cause, city } = req.body;
+        const result = await aiService.matchmaker({ budget, cause, city });
+        res.json({ success: true, ...result });
+    } catch (err) {
+        console.error('AI Matchmaker Error:', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// Feature 3: AI Campaign / Appeal Generator for Orphanage & Old Age Homes
+app.post('/api/ai/generate-campaign', async (req, res) => {
+    try {
+        const { org_name, need_title, category, basic_details, target_amount } = req.body;
+        const result = await aiService.generateCampaignAppeal({
+            org_name,
+            need_title,
+            category,
+            basic_details,
+            target_amount
+        });
+        res.json({ success: true, ...result });
+    } catch (err) {
+        console.error('AI Campaign Error:', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// Feature 4: AI Organization Verification & Trust Analysis for Admin
+app.post('/api/ai/verify-organization', async (req, res) => {
+    try {
+        const { user_id, orgData } = req.body;
+        let dataToAudit = orgData;
+        if (!dataToAudit && user_id) {
+            const user = db.prepare('SELECT id, name, role, email, mobile, city, address, extra_info FROM users WHERE id = ?').get(user_id);
+            if (user) {
+                dataToAudit = user;
+            }
+        }
+        if (!dataToAudit) {
+            return res.status(400).json({ success: false, message: 'Organization data or valid user_id required.' });
+        }
+        const audit = await aiService.verifyOrganization(dataToAudit);
+        res.json({ success: true, audit });
+    } catch (err) {
+        console.error('AI Verify Error:', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// Feature 5: AI Personalized Thank-You Note & Tangible Impact Summary
+app.post('/api/ai/thank-you-note', async (req, res) => {
+    try {
+        const { donor_name, amount, org_name, cause_type, payment_id } = req.body;
+        const result = await aiService.generateThankYouImpact({
+            donor_name,
+            amount,
+            org_name,
+            cause_type,
+            payment_id
+        });
+        res.json({ success: true, ...result });
+    } catch (err) {
+        console.error('AI Thank-You Error:', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// ==========================================
 // 6. WEBSOCKET REAL-TIME CONNECTIONS
 // ==========================================
 io.on('connection', (socket) => {

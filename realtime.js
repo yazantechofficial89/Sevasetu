@@ -340,6 +340,87 @@
             } catch (err) {
                 return null;
             }
+        },
+
+        // ==========================================
+        // GOOGLE GEMINI AI ASSISTANT SUITE
+        // ==========================================
+        async getAIStatus() {
+            try {
+                const res = await fetch(`${API_BASE}/api/ai/status`);
+                return await res.json();
+            } catch (err) {
+                return { success: false, isGeminiActive: false };
+            }
+        },
+
+        async aiChat(message, conversationHistory = []) {
+            try {
+                const res = await fetch(`${API_BASE}/api/ai/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, conversationHistory })
+                });
+                return await res.json();
+            } catch (err) {
+                return { 
+                    success: true, 
+                    reply: "Namaste! I am currently operating in offline mode. You can still browse our verified orphanages and old age homes directly on the dashboard.",
+                    suggestions: ["View Verified Homes", "80G Tax Exemption"]
+                };
+            }
+        },
+
+        async aiMatchmaker(params = {}) {
+            try {
+                const res = await fetch(`${API_BASE}/api/ai/matchmaker`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(params)
+                });
+                return await res.json();
+            } catch (err) {
+                return { success: false, message: err.message };
+            }
+        },
+
+        async aiGenerateCampaign(params = {}) {
+            try {
+                const res = await fetch(`${API_BASE}/api/ai/generate-campaign`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(params)
+                });
+                return await res.json();
+            } catch (err) {
+                return { success: false, message: err.message };
+            }
+        },
+
+        async aiVerifyOrganization(orgData) {
+            try {
+                const res = await fetch(`${API_BASE}/api/ai/verify-organization`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orgData })
+                });
+                return await res.json();
+            } catch (err) {
+                return { success: false, message: err.message };
+            }
+        },
+
+        async aiThankYouNote(params = {}) {
+            try {
+                const res = await fetch(`${API_BASE}/api/ai/thank-you-note`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(params)
+                });
+                return await res.json();
+            } catch (err) {
+                return { success: false, message: err.message };
+            }
         }
     };
 
