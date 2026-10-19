@@ -1,4 +1,4 @@
-# SevaSetu (सेवा सेतु) 🤝
+# SevaSetu  🤝
 > **A Digital Bridge Between Care and Need**
 
 SevaSetu connects donors directly with verified orphanages and old-age homes across India, ensuring complete transparency, trust, and direct impact without middlemen.
