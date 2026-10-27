@@ -11,6 +11,10 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const db = require('./db');
+const { connectMongoDB, models } = require('./mongodb');
+
+// Connect to MongoDB asynchronously on startup
+connectMongoDB().catch(err => console.warn('MongoDB Init Notice:', err.message));
 
 const app = express();
 const server = http.createServer(app);

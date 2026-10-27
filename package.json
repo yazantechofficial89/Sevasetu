@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
+    "db:migrate": "node migrate-to-mongo.js",
     "mobile:sync": "npx cap sync android",
     "mobile:open": "npx cap open android",
     "mobile:run": "npx cap run android"
@@ -25,6 +26,7 @@
     "express": "^5.3.0",
     "firebase": "^13.1.0",
     "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.11.4",
     "nodemailer": "^10.1.2",
     "razorpay": "^2.9.8",
     "socket.io": "^4.8.4"
