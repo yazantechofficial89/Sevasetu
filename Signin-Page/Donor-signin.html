@@ -7,10 +7,100 @@
 <title>SevaSetu | Donor Sign In</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js">
+// ==========================================
+// 🌐 GOOGLE SIGN-IN HANDLER
+// ==========================================
+async function handleGoogleSignIn() {
+    const msg = document.getElementById("msg");
+    if (msg) {
+        msg.style.display = "block";
+        msg.className = "message";
+        msg.innerText = "Opening Google Sign-In...";
+    }
+
+    try {
+        if (!window.signInWithGoogle) {
+            throw new Error("Firebase Auth is loading. Please try again in 2 seconds.");
+        }
+
+        const res = await window.signInWithGoogle();
+        if (!res || !res.user) {
+            throw new Error("Google Sign-In was cancelled or failed.");
+        }
+
+        if (msg) {
+            msg.innerText = "Authenticating with SevaSetu server...";
+        }
+
+        const apiBase = window.API_BASE || 'http://localhost:5000';
+        let serverRes = null;
+        try {
+            const apiFetch = await fetch(`${apiBase}/api/auth/google-login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: res.user.email,
+                    name: res.user.name,
+                    role: 'donor',
+                    photoURL: res.user.photoURL
+                })
+            });
+            serverRes = await apiFetch.json();
+        } catch (_) {}
+
+        const userObj = serverRes && serverRes.user ? serverRes.user : {
+            role: "donor",
+            name: res.user.name,
+            email: res.user.email,
+            photoURL: res.user.photoURL,
+            city: "India"
+        };
+
+        if (serverRes && serverRes.token) {
+            localStorage.setItem("sevasetu_token", serverRes.token);
+        }
+        localStorage.setItem("sevasetu_currentUser", JSON.stringify(userObj));
+        localStorage.setItem("name", userObj.name);
+        localStorage.setItem("email", userObj.email);
+
+        if (msg) {
+            msg.className = "message success";
+            msg.innerText = `Google Login Successful! ✅ Welcome, ${userObj.name}!`;
+        }
+
+        setTimeout(() => {
+            window.location.href = "../Dashboard/Donor-dashboard.html";
+        }, 800);
+
+    } catch (err) {
+        console.error("Google sign-in error:", err);
+        if (msg) {
+            msg.className = "message error";
+            if (err.code === 'auth/operation-not-allowed' || (err.message && err.message.includes('operation-not-allowed'))) {
+                msg.innerHTML = `
+                    <div style="font-size:12px;line-height:1.5;text-align:left;padding:4px 0;">
+                        <strong style="color:#ffb066;"><i class="fa-solid fa-triangle-exclamation"></i> Google Provider Off Hai:</strong><br>
+                        Firebase Console me Google enable karein:<br>
+                        1. <a href="https://console.firebase.google.com/project/sevasetu-c2576/authentication/providers" target="_blank" style="color:#ff7b00;text-decoration:underline;font-weight:bold;">Firebase Console Kholein</a><br>
+                        2. <b>Google</b> par click karke <b>Enable</b> toggle ON karein aur <b>Save</b> karein.
+                    </div>
+                `;
+            } else if (err.code === 'auth/popup-closed-by-user') {
+                msg.innerText = "Google sign-in popup was closed.";
+            } else {
+                msg.innerText = err.message || "Failed to sign in with Google.";
+            }
+        }
+    }
+}
+
+</script>
 <!-- Real-Time WebSockets & API -->
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script src="../realtime.js"></script>
+<!-- Firebase Modular SDK & Phone OTP -->
+<script type="module" src="../firebase-init.js"></script>
 
 <style>
 *{
@@ -158,6 +248,119 @@ button:hover{
 
 .error{
     color:#ff4d4d;
+}
+
+/* AUTH TABS & OTP STYLING */
+.auth-tabs {
+    display: flex;
+    background: rgba(255,255,255,0.08);
+    border-radius: 30px;
+    padding: 4px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.auth-tab {
+    flex: 1;
+    padding: 9px 12px;
+    border-radius: 25px;
+    background: transparent;
+    border: none;
+    color: #cbd5e1;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.auth-tab.active {
+    background: #ff7b00;
+    color: white;
+    box-shadow: 0 4px 15px rgba(255,123,0,0.4);
+}
+.phone-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+.country-code {
+    width: 75px;
+    padding: 12px 10px;
+    border-radius: 30px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #ff7b00;
+    font-weight: 600;
+    text-align: center;
+    font-size: 14px;
+}
+.otp-inputs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 15px 0;
+}
+.otp-digit {
+    width: 42px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    outline: none;
+}
+.otp-digit:focus {
+    border-color: #ff7b00;
+    box-shadow: 0 0 10px rgba(255,123,0,0.4);
+}
+
+
+/* GOOGLE SIGN IN BUTTON */
+.social-divider {
+    display: flex;
+    align-items: center;
+    margin: 18px 0 14px;
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+.social-divider::before,
+.social-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.15);
+}
+.social-divider span {
+    padding: 0 10px;
+}
+.btn-google {
+    width: 100%;
+    padding: 11px 16px;
+    border-radius: 30px;
+    background: #ffffff;
+    color: #1e293b !important;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    margin-bottom: 12px;
+}
+.btn-google:hover {
+    background: #f1f5f9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,255,255,0.25);
+}
+.btn-google svg {
+    flex-shrink: 0;
 }
 
 /* CARDS */
@@ -308,9 +511,19 @@ footer{
             <i class="fa-solid fa-hand-holding-heart"></i> SevaSetu
         </div>
 
-        <h2>Donor Login</h2>
+        <h2>Donor Sign In</h2>
 
-        <form onsubmit="loginUser(event)">
+        <!-- AUTH METHOD TABS -->
+        <div class="auth-tabs">
+            <button type="button" class="auth-tab active" id="tabEmail" onclick="switchAuthTab('email')">
+                <i class="fa-solid fa-lock"></i> Password
+            </button>
+            <button type="button" class="auth-tab" id="tabOtp" onclick="switchAuthTab('otp')">
+                <i class="fa-solid fa-mobile-screen"></i> Mobile OTP
+            </button>
+        </div>
+
+        <form id="emailLoginForm" onsubmit="loginUser(event)">
             <div class="input-box">
                 <i class="fa-solid fa-envelope"></i>
                 <input type="email" id="email" placeholder="Email" required>
@@ -322,16 +535,79 @@ footer{
             </div>
 
             <div style="display:flex;justify-content:flex-end;margin-top:-6px;margin-bottom:14px;">
-                <a href="forgot-password.html" style="color:#ff7b00;font-size:12px;text-decoration:none;">Forgot Password?</a>
+                <a href="../forgot-password.html" style="color:#ff7b00;font-size:12px;text-decoration:none;">Forgot Password?</a>
             </div>
 
             <button type="submit">Login</button>
-            <p style="margin-top:15px;font-size:13px;">Don't have an account? <a href="../Registration/Donor.html" style="color:#ff7b00;text-decoration:underline;">Register here</a></p>
-
-            <!-- ✅ MESSAGE HERE -->
-            <div id="msg" class="message"></div>
-
+            
         </form>
+
+
+
+        <!-- FORM 2: REAL MOBILE SMS OTP -->
+        <div id="otpLoginForm" style="display:none;">
+            <!-- Step 1: Phone Entry -->
+            <div id="phoneInputStep">
+                <p style="font-size:13px;color:#cbd5e1;margin-bottom:14px;">Enter your 10-digit mobile number to receive a real 6-digit SMS OTP.</p>
+                <div class="phone-row">
+                    <div class="country-code">+91</div>
+                    <div class="input-box" style="flex:1;margin-bottom:0;">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="tel" id="mobileNumber" placeholder="Mobile Number" maxlength="10">
+                    </div>
+                </div>
+                <!-- reCAPTCHA container for Firebase Phone Auth -->
+                <div id="recaptcha-container" style="margin: 10px 0;"></div>
+
+                <button type="button" id="btnSendMobileOtp" onclick="handleSendMobileOtp()" style="margin-top:10px;">
+                    <i class="fa-solid fa-paper-plane"></i> Send SMS OTP
+                </button>
+            </div>
+
+            <!-- Step 2: OTP Verification -->
+            <div id="otpVerifyStep" style="display:none;">
+                <p style="font-size:13px;color:#cbd5e1;margin-bottom:8px;">Enter the 6-digit SMS OTP sent to <strong id="displayTargetPhone" style="color:#ff7b00;"></strong></p>
+                <div class="otp-inputs">
+                    <input type="text" maxlength="1" class="otp-digit" id="dOtp1">
+                    <input type="text" maxlength="1" class="otp-digit" id="dOtp2">
+                    <input type="text" maxlength="1" class="otp-digit" id="dOtp3">
+                    <input type="text" maxlength="1" class="otp-digit" id="dOtp4">
+                    <input type="text" maxlength="1" class="otp-digit" id="dOtp5">
+                    <input type="text" maxlength="1" class="otp-digit" id="dOtp6">
+                </div>
+                <div style="font-size:12px;color:#94a3b8;margin-bottom:12px;">
+                    <a onclick="changePhone()" style="color:#ff7b00;cursor:pointer;">Change Phone Number</a>
+                </div>
+                <button type="button" id="btnVerifyMobileOtp" onclick="handleVerifyMobileOtp()">
+                    <i class="fa-solid fa-shield-halved"></i> Verify & Login
+                </button>
+            </div>
+            
+        </div>
+
+        <!-- ✅ MESSAGE HERE -->
+        <!-- Container Msg -->
+        
+        <!-- GOOGLE SIGN-IN -->
+        <div class="social-divider">
+            <span>OR CONTINUE WITH</span>
+        </div>
+
+        <button type="button" class="btn-google" onclick="handleGoogleSignIn()">
+            <svg width="18" height="18" viewBox="0 0 18 18">
+                <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z"/>
+                <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
+                <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/>
+                <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/>
+            </svg>
+            Sign In with Google
+        </button>
+
+        <p style="margin-top:14px;font-size:13px;">Don't have an account? <a href="../Registration/Donor.html" style="color:#ff7b00;text-decoration:underline;">Register here</a></p>
+
+        <div id="msg" class="message"></div>
+
+
     </div>
 
     <!-- SIDE CARDS -->
@@ -426,10 +702,12 @@ async function loginUser(e){
             } else if(res && res.status === 'rejected'){
                 msg.innerText = "❌ Registration Rejected: Your account application was not approved by Admin.";
                 msg.className = "message error";
+        
                 return;
             } else if(res && !res.success){
                 msg.innerText = res.message || "Invalid email or password.";
                 msg.className = "message error";
+        
                 return;
             }
         } catch(err) {
@@ -470,6 +748,198 @@ async function loginUser(e){
         msg.innerText = "Invalid Email or Password ❌";
         msg.className = "message error";
     }
+}
+
+// ==========================================
+// 📱 REAL MOBILE SMS OTP LOGIN HANDLERS
+// ==========================================
+let activeMobileNumber = "";
+
+function switchAuthTab(tab) {
+    const tabEmail = document.getElementById("tabEmail");
+    const tabOtp = document.getElementById("tabOtp");
+    const formEmail = document.getElementById("emailLoginForm");
+    const formOtp = document.getElementById("otpLoginForm");
+    const msg = document.getElementById("msg");
+    if (msg) msg.style.display = "none";
+
+    if (tab === "otp") {
+        tabOtp.classList.add("active");
+        tabEmail.classList.remove("active");
+        formEmail.style.display = "none";
+        formOtp.style.display = "block";
+        setTimeout(() => document.getElementById("mobileNumber").focus(), 100);
+    } else {
+        tabEmail.classList.add("active");
+        tabOtp.classList.remove("active");
+        formEmail.style.display = "block";
+        formOtp.style.display = "none";
+        setTimeout(() => document.getElementById("email").focus(), 100);
+    }
+}
+
+// Auto advance 6 OTP input digits
+const dOtpBoxes = [
+    document.getElementById("dOtp1"),
+    document.getElementById("dOtp2"),
+    document.getElementById("dOtp3"),
+    document.getElementById("dOtp4"),
+    document.getElementById("dOtp5"),
+    document.getElementById("dOtp6")
+];
+
+dOtpBoxes.forEach((box, idx) => {
+    if (!box) return;
+    box.addEventListener("input", (e) => {
+        let val = e.target.value.replace(/[^0-9]/g, '');
+        e.target.value = val;
+        if (val && idx < 5) dOtpBoxes[idx + 1].focus();
+    });
+    box.addEventListener("keydown", (e) => {
+        if (e.key === "Backspace" && !box.value && idx > 0) dOtpBoxes[idx - 1].focus();
+    });
+    box.addEventListener("paste", (e) => {
+        e.preventDefault();
+        let pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+        if (pasted.length === 6) {
+            for (let i = 0; i < 6; i++) dOtpBoxes[i].value = pasted[i];
+            dOtpBoxes[5].focus();
+        }
+    });
+});
+
+async function handleSendMobileOtp() {
+    const phoneInput = document.getElementById('mobileNumber');
+    const rawNumber = (phoneInput.value || '').trim();
+    const btn = document.getElementById('btnSendMobileOtp');
+    const msg = document.getElementById('msg');
+
+    if (rawNumber.length < 10) {
+        msg.style.display = 'block';
+        msg.className = 'message error';
+        msg.innerText = 'Please enter a valid 10-digit mobile number.';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending OTP...';
+    msg.style.display = 'block';
+    msg.className = 'message';
+    msg.innerText = 'Connecting to OTP Gateway...';
+
+    activeMobileNumber = rawNumber;
+    let useServerOtp = false;
+
+    try {
+        if (window.sendMobileOtp) {
+            try {
+                await window.sendMobileOtp(rawNumber, 'recaptcha-container');
+            } catch (fbErr) {
+                console.warn('Firebase Phone Auth notice, routing via SevaSetu Gateway:', fbErr.message);
+                useServerOtp = true;
+            }
+        } else {
+            useServerOtp = true;
+        }
+
+        if (useServerOtp) {
+            const apiBase = window.API_BASE || 'http://localhost:5000';
+            const res = await fetch(`${apiBase}/api/auth/send-mobile-otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mobile: rawNumber })
+            });
+            const data = await res.json();
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to dispatch OTP.');
+            }
+            window.isServerOtpActive = true;
+        } else {
+            window.isServerOtpActive = false;
+        }
+
+        document.getElementById('displayTargetPhone').innerText = '+91 ' + rawNumber;
+        document.getElementById('phoneInputStep').style.display = 'none';
+        document.getElementById('otpVerifyStep').style.display = 'block';
+        msg.className = 'message success';
+        msg.innerText = '✅ 6-digit OTP code sent successfully to +91 ' + rawNumber;
+        setTimeout(() => dOtpBoxes[0].focus(), 150);
+
+    } catch (err) {
+        console.error('SMS OTP dispatch error:', err);
+        msg.className = 'message error';
+        msg.innerText = err.message || 'Failed to dispatch OTP.';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send SMS OTP';
+    }
+}
+
+async function handleVerifyMobileOtp() {
+    const otpCode = dOtpBoxes.map(b => b.value).join('');
+    const btn = document.getElementById('btnVerifyMobileOtp');
+    const msg = document.getElementById('msg');
+
+    if (otpCode.length !== 6) {
+        msg.style.display = 'block';
+        msg.className = 'message error';
+        msg.innerText = 'Please enter all 6 digits of the OTP code.';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
+    msg.style.display = 'block';
+    msg.className = 'message';
+    msg.innerText = 'Verifying OTP code...';
+
+    try {
+        if (!window.isServerOtpActive && window.verifyMobileOtp) {
+            try {
+                await window.verifyMobileOtp(otpCode);
+            } catch (fbVerifyErr) {
+                console.warn('Firebase verification notice, verifying via SevaSetu server:', fbVerifyErr.message);
+            }
+        }
+
+        const apiBase = window.API_BASE || 'http://localhost:5000';
+        const apiFetch = await fetch(`${apiBase}/api/auth/verify-mobile-otp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mobile: activeMobileNumber, otp: otpCode, role: 'donor' })
+        });
+        const serverRes = await apiFetch.json();
+
+        if (!serverRes.success) {
+            throw new Error(serverRes.message || 'Invalid OTP code.');
+        }
+
+        const userObj = serverRes.user;
+        if (serverRes.token) {
+            localStorage.setItem('sevasetu_token', serverRes.token);
+        }
+        localStorage.setItem('sevasetu_currentUser', JSON.stringify(userObj));
+        localStorage.setItem('name', userObj.name);
+        localStorage.setItem('email', userObj.email);
+
+        msg.className = 'message success';
+        msg.innerText = `OTP Verified Successfully! ✅ Welcome, ${userObj.name}!`;
+        setTimeout(() => { window.location.href = '../Dashboard/Donor-dashboard.html'; }, 800);
+
+    } catch (err) {
+        console.error('OTP verification error:', err);
+        msg.className = 'message error';
+        msg.innerText = err.message || 'Invalid OTP code. Please check and try again.';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Verify & Login';
+    }
+}
+
+function changePhone() { 
+    document.getElementById("otpVerifyStep").style.display = "none";
+    document.getElementById("phoneInputStep").style.display = "block";
+    document.getElementById("msg").style.display = "none"; 
 }
 </script>
 

@@ -21,6 +21,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Firebase cache
+.firebase/
+
 # System & Editor files
 .DS_Store
 Thumbs.db

@@ -89,6 +89,15 @@ function initDatabase() {
             verified INTEGER DEFAULT 0,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
+
+        CREATE TABLE IF NOT EXISTS mobile_otps (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            mobile TEXT NOT NULL,
+            otp TEXT NOT NULL,
+            expires_at INTEGER NOT NULL,
+            verified INTEGER DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
     `);
 
     // Safe migration: Add status column if existing DB didn't have it

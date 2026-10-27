@@ -20,6 +20,8 @@
 <!-- PDF Receipt Generator -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="../receipt.js"></script>
+<!-- Firebase App & Analytics -->
+<script type="module" src="../firebase-init.js"></script>
 
 <style>
 
@@ -883,6 +885,19 @@ function recordSuccessfulDonation(paymentId, paymentMethod){
 
     // 5. Generate and Display AI Impact & Personalized Gratitude
     loadAIImpactSummary(donorName, currentAmount, selectedOrg, selectedType, paymentId);
+
+    // 6. Log Firebase Analytics Event
+    if (window.logFirebaseEvent) {
+        window.logFirebaseEvent("purchase", {
+            transaction_id: paymentId,
+            value: currentAmount,
+            currency: "INR",
+            items: [{
+                item_name: selectedOrg,
+                item_category: selectedType
+            }]
+        });
+    }
 
     // Reset inputs
     document.getElementById("qrcodeWrapper").style.display = "none";
