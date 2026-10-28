@@ -1285,15 +1285,20 @@ io.on('connection', (socket) => {
     });
 });
 
-// Start Server
-server.listen(PORT, () => {
-    console.log(`
+// Export Express app for Vercel / serverless deployments
+module.exports = app;
+
+// Start Server locally if executed directly (not inside Vercel serverless function)
+if (!process.env.VERCEL) {
+    server.listen(PORT, () => {
+        console.log(`
 ==================================================
 🌟 SevaSetu Real-Time Server running!
 📍 URL: http://localhost:${PORT}
 ⚡ WebSockets: Active (Socket.io)
-💾 Database: SQLite (sevasetu.db)
+💾 Database: SQLite (sevasetu.db) & MongoDB
 💳 Payment Gateway: Razorpay Checkout
 ==================================================
-    `);
-});
+        `);
+    });
+}

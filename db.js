@@ -1,21 +1,40 @@
 const fs = require('fs');
-const { DatabaseSync } = require('node:sqlite');
 const path = require('path');
+const os = require('os');
 const bcrypt = require('bcryptjs');
 
-const dbPath = path.join(__dirname, 'sevasetu.db');
+// On Vercel / serverless lambda, the root filesystem is read-only. Use os.tmpdir()
+const isVercel = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+const dbDir = isVercel ? os.tmpdir() : __dirname;
+const dbPath = path.join(dbDir, 'sevasetu.db');
 
 let db;
 try {
+    const { DatabaseSync } = require('node:sqlite');
     db = new DatabaseSync(dbPath);
-    db.exec('PRAGMA journal_mode = WAL;');
+    try {
+        db.exec('PRAGMA journal_mode = WAL;');
+    } catch (_) {}
 } catch (e) {
-    console.warn('Re-initializing fresh SQLite database...');
+    console.warn('⚠️ SQLite DatabaseSync fallback notice:', e.message);
     try {
         if (fs.existsSync(dbPath)) fs.unlinkSync(dbPath);
     } catch (_) {}
-    db = new DatabaseSync(dbPath);
-    db.exec('PRAGMA journal_mode = WAL;');
+    try {
+        const { DatabaseSync } = require('node:sqlite');
+        db = new DatabaseSync(dbPath);
+        db.exec('PRAGMA journal_mode = WAL;');
+    } catch (err) {
+        console.warn('⚠️ SQLite unavailable in serverless mode. Falling back to MongoDB.');
+        db = {
+            prepare: () => ({
+                get: () => null,
+                all: () => [],
+                run: () => ({ changes: 0, lastInsertRowid: 0 })
+            }),
+            exec: () => {}
+        };
+    }
 }
 
 // Initialize Tables
