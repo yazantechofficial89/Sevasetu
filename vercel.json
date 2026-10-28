@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/index.js": {
-      "includeFiles": "{*.html,**/*.html,*.png,*.css,*.js,*.json}"
+      "includeFiles": "{*.html,**/*.html,*.png,*.css,*.js,*.json,*.xml,*.txt,*.ico,*.svg}"
     }
   },
   "rewrites": [

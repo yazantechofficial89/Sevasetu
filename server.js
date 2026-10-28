@@ -71,6 +71,17 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'Homepage.html'));
 });
 
+// Explicit SEO Routes
+app.get('/sitemap.xml', (req, res) => {
+    res.type('application/xml');
+    res.sendFile(path.join(__dirname, 'sitemap.xml'));
+});
+
+app.get('/robots.txt', (req, res) => {
+    res.type('text/plain');
+    res.sendFile(path.join(__dirname, 'robots.txt'));
+});
+
 // ==========================================
 // 1. AUTHENTICATION REST APIS
 // ==========================================
