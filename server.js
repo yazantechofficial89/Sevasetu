@@ -1,5 +1,6 @@
 const http = require('http');
 const express = require('express');
+const fs = require('fs');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const path = require('path');
@@ -31,7 +32,24 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve all frontend static files from workspace root
-app.use(express.static(__dirname));
+// Serve all frontend static files from workspace root with automatic .html resolution
+app.use(express.static(__dirname, {
+    extensions: ['html', 'htm']
+}));
+
+// Automatic fallback route for extensionless HTML requests (e.g. /Role -> Role.html)
+app.use((req, res, next) => {
+    if (req.method === 'GET' && !req.path.startsWith('/api/')) {
+        const cleanPath = req.path.replace(/^\/+|\/+$/g, '');
+        if (cleanPath) {
+            const candidate = path.join(__dirname, cleanPath + '.html');
+            if (fs.existsSync(candidate)) {
+                return res.sendFile(candidate);
+            }
+        }
+    }
+    next();
+});
 
 // Razorpay Instance
 const razorpay = new Razorpay({

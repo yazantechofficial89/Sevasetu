@@ -1,29 +1,22 @@
 {
   "version": 2,
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "{*.html,**/*.html,*.png,*.css,*.js,*.json}"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "/api"
     },
     {
-      "source": "/Role",
-      "destination": "/Role.html"
+      "source": "/",
+      "destination": "/api"
     },
     {
-      "source": "/Homepage",
-      "destination": "/Homepage.html"
-    },
-    {
-      "source": "/admin",
-      "destination": "/admin.html"
-    },
-    {
-      "source": "/orphanage",
-      "destination": "/orphanage.html"
-    },
-    {
-      "source": "/forgot-password",
-      "destination": "/forgot-password.html"
+      "source": "/((?!api/).*)",
+      "destination": "/api"
     }
   ]
 }

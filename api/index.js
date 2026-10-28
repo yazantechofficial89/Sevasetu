@@ -4,14 +4,13 @@ const app = require('../server');
 
 module.exports = (req, res) => {
     // If Vercel rewrote the URL to the destination path (/api, /api/, or /api/index.js),
-    // restore the client's actual requested API path so Express routes match correctly.
+    // restore the client's actual requested path so Express routes & static files match correctly.
     const originalPath = req.headers['x-forwarded-uri'] || 
                          req.headers['x-vercel-matched-path'] || 
                          req.headers['x-matched-path'] || 
                          req.headers['x-now-route-matches'];
 
-    if (originalPath && originalPath.startsWith('/api') && 
-        (req.url === '/api' || req.url === '/api/' || req.url === '/api/index.js' || req.url === '/api/index')) {
+    if (originalPath && (req.url === '/api' || req.url === '/api/' || req.url === '/api/index.js' || req.url === '/api/index')) {
         req.url = originalPath;
     }
 
