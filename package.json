@@ -12,7 +12,7 @@
     "mobile:run": "npx cap run android"
   },
   "engines": {
-    "node": ">=22.5.0"
+    "node": "22.x"
   },
   "keywords": [],
   "author": "",

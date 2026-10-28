@@ -1,15 +1,29 @@
 {
   "version": 2,
-  "cleanUrls": true,
-  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.js"
+      "destination": "/api"
     },
     {
-      "source": "/",
+      "source": "/Role",
+      "destination": "/Role.html"
+    },
+    {
+      "source": "/Homepage",
       "destination": "/Homepage.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/orphanage",
+      "destination": "/orphanage.html"
+    },
+    {
+      "source": "/forgot-password",
+      "destination": "/forgot-password.html"
     }
   ]
 }
