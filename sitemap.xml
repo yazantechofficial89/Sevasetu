@@ -1,85 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://sevasetu-app.vercel.app/</loc>
+    <loc>https://sevasetu.sbs/</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://sevasetu-app.vercel.app/Role.html</loc>
+    <loc>https://sevasetu.sbs/Role.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://sevasetu-app.vercel.app/Registration/Donor.html</loc>
+    <loc>https://sevasetu.sbs/Registration/Donor.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sevasetu-app.vercel.app/Registration/orphanges.html</loc>
+    <loc>https://sevasetu.sbs/Registration/orphanges.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sevasetu-app.vercel.app/Registration/Old-agehome.html</loc>
+    <loc>https://sevasetu.sbs/Registration/Old-agehome.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sevasetu-app.vercel.app/Signin-Page/Donor-signin.html</loc>
+    <loc>https://sevasetu.sbs/Signin-Page/Donor-signin.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sevasetu-app.vercel.app/Signin-Page/Old-age.html</loc>
+    <loc>https://sevasetu.sbs/Signin-Page/Old-age.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sevasetu-app.vercel.app/Signin-Page/Orphanages-signin.html</loc>
+    <loc>https://sevasetu.sbs/Signin-Page/Orphanages-signin.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sevasetu-app.vercel.app/legal-links/about.html</loc>
+    <loc>https://sevasetu.sbs/legal-links/about.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://sevasetu-app.vercel.app/legal-links/contact.html</loc>
+    <loc>https://sevasetu.sbs/legal-links/contact.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://sevasetu-app.vercel.app/legal-links/howitworks.html</loc>
+    <loc>https://sevasetu.sbs/legal-links/howitworks.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://sevasetu-app.vercel.app/legal-links/faq.html</loc>
+    <loc>https://sevasetu.sbs/legal-links/faq.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://sevasetu-app.vercel.app/legal-links/terms.html</loc>
+    <loc>https://sevasetu.sbs/legal-links/terms.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://sevasetu-app.vercel.app/legal-links/Privacy-Policy.html</loc>
+    <loc>https://sevasetu.sbs/legal-links/Privacy-Policy.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>

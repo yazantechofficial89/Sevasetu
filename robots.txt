@@ -4,4 +4,4 @@ Disallow: /admin.html
 Disallow: /Dashboard/profile.html
 Disallow: /sevasetu.db*
 
-Sitemap: https://sevasetu-app.vercel.app/sitemap.xml
+Sitemap: https://sevasetu.sbs/sitemap.xml
